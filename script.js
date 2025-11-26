@@ -95,33 +95,35 @@ async function startNewGame() {
 
 async function handlePayment() {
     if (typeof WebLN === 'undefined') {
-        alert("WebLN is not loaded or available in your browser.");
+        alert("WebLN not available.");
         return false;
     }
-
     try {
         const webln = await WebLN.requestProvider();
-        if (!webln) {
-            alert("Please install a WebLN wallet to proceed with payment.");
-            return false;
-        }
+        await webln.enable();
 
         const mainInvoice = "lno1pqp9yzq2yscxxc3hx4snswpdvgurvdedxscrvepd8ymx2v3dvejnscmpx3nrvcfexgepvggzz220lavkujt662gze403jee7jqsf20vsvfwk3s3wjx6353wqxtfs";
-        await webln.sendPayment(mainInvoice);
-        alert("Payment of 21 sats successful!");
+        const mainRes = await webln.sendPayment(mainInvoice);
+        console.log("Main payment result:", mainRes);
+
+        if (!mainRes || !mainRes.preimage) {
+            alert("Payment failed.");
+            return false;
+        }
 
         const wantsTip = confirm("Would you like to tip?");
         if (wantsTip) {
             const tipInvoice = "lno1pqzqzsr0gq9zgvrrvgmn2cfc8qkkywpkxukngvpkvsknjdn9xgkkvefcvdsnge3kvyunyvskyypp998l7ktwf9ad9ypv6hcevulfqgy48kgxyhtgcghfrdg6ghqr95c";
-            await webln.sendPayment(tipInvoice);
-            alert("Tip payment successful!");
+            const tipRes = await webln.sendPayment(tipInvoice);
+            console.log("Tip payment result:", tipRes);
+            if (!tipRes || !tipRes.preimage) alert("Tip failed.");
+            else alert("Tip sent successfully!");
         }
 
         return true;
-
-    } catch (error) {
-        console.error("Payment failed:", error);
-        alert("Payment failed. Please try again.");
+    } catch (err) {
+        console.error("Payment error:", err);
+        alert("Payment error. Check your wallet.");
         return false;
     }
 }
