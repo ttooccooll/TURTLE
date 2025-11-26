@@ -23,6 +23,27 @@ function handleFirstKeypress(e) {
     }
 }
 
+async function enableWebLN() {
+  if (typeof WebLN === 'undefined') {
+    alert('WebLN is not loaded or available in your browser.');
+    return;
+  }
+
+  try {
+    const webln = await WebLN.requestProvider();
+    await webln.enable();
+    console.log("WebLN enabled successfully!");
+
+    const info = await webln.getInfo();
+    console.log("Node Info:", info);
+  } catch (error) {
+    console.error("Error:", error);
+    alert("WebLN provider not found. Please install a WebLN-compatible wallet.");
+  }
+}
+
+enableWebLN();
+
 function setSafeTimeout(fn, delay) {
     const id = setTimeout(fn, delay);
     activeTimeouts.push(id);
