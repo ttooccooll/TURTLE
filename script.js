@@ -123,43 +123,28 @@ async function handlePayment() {
 }
 
 async function generateInvoiceForBlink(amountSats) {
-    try {
-        const resp = await fetch('/api/create-invoice', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
-        });
+  const resp = await fetch('/api/create-invoice', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
+  });
 
-        const data = await resp.json();
+  const data = await resp.json();
 
-        if (!resp.ok || !data.paymentRequest) {
-            console.error("Blink API returned an error:", data);
-            throw new Error("Failed to generate invoice");
-        }
+  if (!resp.ok || !data.paymentRequest) {
+    console.error("Blink API error:", data);
+    throw new Error("Failed to generate invoice");
+  }
 
-        console.log("Blink invoice generated:", data.paymentRequest);
-        return data.paymentRequest;
-
-    } catch (error) {
-        console.error("Error generating Blink invoice:", error);
-        throw error;
-    }
+  return data.paymentRequest;
 }
 
 async function payInvoice(paymentRequest) {
-    if (typeof WebLN === 'undefined') {
-        alert("WebLN is not available in your browser. Please install a WebLN wallet.");
-        throw new Error("WebLN not available");
-    }
+  if (typeof WebLN === 'undefined') throw new Error("WebLN not available");
 
-    try {
-        const webln = await WebLN.requestProvider();
-        await webln.enable();
-        await webln.sendPayment(paymentRequest);
-    } catch (error) {
-        console.error("WebLN payment failed:", error);
-        throw error;
-    }
+  const webln = await WebLN.requestProvider();
+  await webln.enable();
+  await webln.sendPayment(paymentRequest);
 }
 
 function createGameBoard() {
