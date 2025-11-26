@@ -6,55 +6,52 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { amountSats, memo } = JSON.parse(req.body);
+    const { amount, memo } = req.body;
+
+    if (!amount || typeof amount !== 'number') {
+      return res.status(400).json({ error: 'Invalid amount' });
+    }
 
     const BLINK_API_KEY = process.env.BLINK_API_KEY;
     const WALLET_ID = process.env.BLINK_WALLET_ID;
+    const BLINK_URL = 'https://api.blink.sv/graphql';
 
     const query = `
-      mutation CreateInvoice($walletId: ID!, $amount: Long!, $memo: String!) {
-        invoiceCreate(input: {walletId: $walletId, amount: $amount, memo: $memo}) {
-          invoice {
-            paymentRequest
-          }
+      mutation CreateInvoice($walletId: ID!, $amount: Int!, $memo: String!) {
+        createInvoice(walletId: $walletId, input: { amount: $amount, memo: $memo }) {
+          paymentRequest
+          id
         }
       }
     `;
 
     const variables = {
       walletId: WALLET_ID,
-      amount: amountSats,
+      amount,
       memo: memo || 'Turtle Game Payment'
     };
 
-    const response = await fetch('https://api.blink.sv/graphql', {
+    const response = await fetch(BLINK_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-KEY': BLINK_API_KEY
+        'Authorization': `Bearer ${BLINK_API_KEY}`,
       },
-      body: JSON.stringify({ query, variables })
+      body: JSON.stringify({ query, variables }),
     });
 
-    const text = await response.text(); // <-- debug
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      console.error('Blink API did not return JSON:', text);
-      return res.status(500).json({ error: 'Blink API returned invalid JSON', text });
+    const data = await response.json();
+
+    if (data.errors) {
+      console.error('Blink API returned errors:', data.errors);
+      return res.status(500).json({ error: 'Failed to create invoice', details: data.errors });
     }
 
-    const paymentRequest = data?.data?.invoiceCreate?.invoice?.paymentRequest;
-    if (!paymentRequest) {
-      console.error('Blink API error:', data);
-      return res.status(500).json({ error: 'Failed to create invoice', data });
-    }
+    const paymentRequest = data.data.createInvoice.paymentRequest;
 
     res.status(200).json({ paymentRequest });
-
   } catch (err) {
-    console.error('Server error:', err);
-    res.status(500).json({ error: 'Server error', message: err.message });
+    console.error('Error in /api/create-invoice:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 }

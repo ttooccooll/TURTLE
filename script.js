@@ -103,8 +103,7 @@ async function handlePayment() {
     const webln = await WebLN.requestProvider();
     await webln.enable();
 
-    // Generate invoice from your serverless Blink endpoint
-    const invoice21 = await generateInvoiceForBlink(21); // updated function
+    const invoice21 = await generateInvoiceForBlink(21);
     await webln.sendPayment(invoice21);
     alert("Payment of 21 sats successful!");
 
@@ -128,22 +127,11 @@ async function generateInvoiceForBlink(amountSats) {
   const resp = await fetch('/api/create-invoice', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ amountSats: amountSats, memo: 'Turtle Game Payment' })
+    body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
   });
 
-  if (!resp.ok) {
-    const text = await resp.text();
-    console.error("Blink API returned an error:", text);
-    throw new Error('Failed to generate invoice');
-  }
-
-  const data = await resp.json();
-  if (!data.paymentRequest) {
-    console.error("Blink API response missing paymentRequest:", data);
-    throw new Error('Invoice not returned');
-  }
-
-  return data.paymentRequest;
+  const { paymentRequest } = await resp.json();
+  return paymentRequest;
 }
 
 function createGameBoard() {
