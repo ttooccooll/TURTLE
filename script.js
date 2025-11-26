@@ -108,11 +108,11 @@ async function handlePayment() {
 
         const lightningAddress = "jasonbohio@getalby.com";
 
-        const invoiceRequest100 = await generateInvoiceForAddress(lightningAddress, 100);
-        console.log("Generated invoice for 100 sats:", invoiceRequest100);
+        const invoiceRequest21 = await generateInvoiceForAddress(lightningAddress, 21);
+        console.log("Generated invoice for 21 sats:", invoiceRequest21);
 
-        await webln.sendPayment(invoiceRequest100);
-        alert("Payment of 100 sats successful!");
+        await webln.sendPayment(invoiceRequest21);
+        alert("Payment of 21 sats successful!");
 
         const tip = confirm("Would you like to tip 10,000 sats?");
         if (tip) {
