@@ -132,7 +132,7 @@ async function generateInvoiceForAddress(address, amountSats) {
     try {
         const webln = await WebLN.requestProvider();
 
-        const invoice = await webln.createInvoice({
+        const invoice = await webln.makeInvoice({
             amount: amountSats,
             description: `Payment to ${address}`,
             memo: "Turtle Game Payment"
