@@ -300,18 +300,18 @@
 
         @media (max-width: 500px) {
             .tile {
-                width: 52px;
-                height: 52px;
+                width: 42px;
+                height: 42px;
                 font-size: 24px;
             }
             
             .key {
-                height: 48px;
+                height: 30px;
                 font-size: 12px;
             }
             
             .key.wide {
-                min-width: 55px;
+                min-width: 50px;
                 font-size: 10px;
             }
         }
