@@ -94,62 +94,45 @@ async function startNewGame() {
 }
 
 async function handlePayment() {
-    if (typeof WebLN === 'undefined') {
-        alert("WebLN is not loaded or available in your browser.");
-        return false;
+  if (typeof WebLN === 'undefined') {
+    alert("WebLN is not loaded or available in your browser.");
+    return false;
+  }
+
+  try {
+    const webln = await WebLN.requestProvider();
+    await webln.enable();
+
+    const invoice21 = await generateInvoiceForAddress(21);
+    await webln.sendPayment(invoice21);
+    alert("Payment of 21 sats successful!");
+
+    const tip = confirm("Would you like to tip 10,000 sats?");
+    if (tip) {
+      const invoiceTip = await generateInvoiceForAddress(10000);
+      await webln.sendPayment(invoiceTip);
+      alert("Tip of 10,000 sats successful!");
     }
 
-    try {
-        const webln = await WebLN.requestProvider();
-        if (!webln) {
-            alert("Please install a WebLN wallet to proceed with payment.");
-            return false;
-        }
+    return true;
 
-        const lightningAddress = "jasonbohio@getalby.com";
-
-        const invoiceRequest21 = await generateInvoiceForAddress(lightningAddress, 21);
-        console.log("Generated invoice for 21 sats:", invoiceRequest21);
-
-        await webln.sendPayment(invoiceRequest21);
-        alert("Payment of 21 sats successful!");
-
-        const tip = confirm("Would you like to tip 10,000 sats?");
-        if (tip) {
-            const invoiceRequestTip = await generateInvoiceForAddress(lightningAddress, 10000);
-            console.log("Generated tip invoice for 10,000 sats:", invoiceRequestTip);
-            await webln.sendPayment(invoiceRequestTip);
-            alert("Tip of 10,000 sats successful!");
-        }
-
-        return true;
-
-    } catch (error) {
-        console.error("Payment failed:", error);
-        alert("Payment failed. Please try again.");
-        return false;
-    }
+  } catch (error) {
+    console.error("Payment failed:", error);
+    alert("Payment failed. Please try again.");
+    return false;
+  }
 }
 
-async function generateInvoiceForAddress(address, amountSats) {
-    if (typeof WebLN === 'undefined') {
-        throw new Error("WebLN is not available in your browser.");
-    }
 
-    try {
-        const webln = await WebLN.requestProvider();
+async function generateInvoiceForAddress(amountSats) {
+  const resp = await fetch('/api/create-invoice', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
+  });
 
-        const invoice = await webln.makeInvoice({
-            amount: amountSats,
-            description: `Payment to ${address}`,
-            memo: "Turtle Game Payment"
-        });
-
-        return invoice.paymentRequest;
-    } catch (error) {
-        console.error("Error generating invoice:", error);
-        throw new Error("Failed to generate Lightning invoice.");
-    }
+  const { paymentRequest } = await resp.json();
+  return paymentRequest;
 }
 
 function createGameBoard() {
