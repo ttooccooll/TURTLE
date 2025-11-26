@@ -11,29 +11,31 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Amount is required and must be a number' });
   }
 
-  try {
+  // Validate environment variables
+  const { BLINK_SERVER, BLINK_API_KEY, BLINK_WALLET_ID } = process.env;
+  if (!BLINK_SERVER || !BLINK_API_KEY || !BLINK_WALLET_ID) {
+    console.error("Missing Blink environment variables");
+    return res.status(500).json({ error: "Server misconfiguration: missing Blink credentials" });
+  }
 
-    const BLINK_SERVER = process.env.BLINK_SERVER;
-    const BLINK_API_KEY = process.env.BLINK_API_KEY;
-    const BLINK_WALLET_ID = process.env.BLINK_WALLET_ID;
-
-    const query = `
-      mutation CreateInvoice($walletId: ID!, $amount: Int!, $memo: String) {
-        createInvoice(input: {walletId: $walletId, amount: $amount, memo: $memo}) {
-          invoice {
-            paymentRequest
-            id
-          }
+  const query = `
+    mutation CreateInvoice($walletId: ID!, $amount: Int!, $memo: String) {
+      createInvoice(input: { walletId: $walletId, amount: $amount, memo: $memo }) {
+        invoice {
+          paymentRequest
+          id
         }
       }
-    `;
+    }
+  `;
 
-    const variables = {
-      walletId: BLINK_WALLET_ID,
-      amount: amount,
-      memo: memo || "Turtle Game Payment",
-    };
+  const variables = {
+    walletId: BLINK_WALLET_ID,
+    amount: Number(amount),
+    memo: memo || "Turtle Game Payment",
+  };
 
+  try {
     const response = await fetch(BLINK_SERVER, {
       method: 'POST',
       headers: {
@@ -43,17 +45,33 @@ export default async function handler(req, res) {
       body: JSON.stringify({ query, variables }),
     });
 
-    const json = await response.json();
+    // Read raw response first
+    const text = await response.text();
+    let json;
+    try {
+      json = JSON.parse(text);
+    } catch (parseError) {
+      console.error("Blink API did not return valid JSON:", text);
+      return res.status(500).json({
+        error: "Blink API did not return valid JSON",
+        rawResponse: text,
+      });
+    }
+
     if (json.errors) {
       console.error("Blink API returned errors:", json.errors);
       return res.status(500).json({ error: 'Failed to create invoice', details: json.errors });
     }
 
-    const paymentRequest = json.data.createInvoice.invoice.paymentRequest;
-    return res.status(200).json({ paymentRequest });
+    const paymentRequest = json?.data?.createInvoice?.invoice?.paymentRequest;
+    if (!paymentRequest) {
+      console.error("Blink API response missing paymentRequest:", json);
+      return res.status(500).json({ error: "Blink API response missing paymentRequest", details: json });
+    }
 
+    return res.status(200).json({ paymentRequest });
   } catch (error) {
     console.error("Server error generating Blink invoice:", error);
-    return res.status(500).json({ error: 'Server error generating invoice' });
+    return res.status(500).json({ error: 'Server error generating invoice', details: error.message });
   }
 }
