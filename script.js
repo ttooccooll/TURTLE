@@ -130,22 +130,16 @@ async function generateInvoiceForBlink(amountSats) {
             body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
         });
 
-        const text = await resp.text();
-        console.log("Blink response text:", text);
-
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch(e) {
-            throw new Error(`Blink API did not return valid JSON: ${text}`);
-        }
+        const data = await resp.json();
 
         if (!resp.ok || !data.paymentRequest) {
             console.error("Blink API returned an error:", data);
             throw new Error("Failed to generate invoice");
         }
 
+        console.log("Blink invoice generated:", data.paymentRequest);
         return data.paymentRequest;
+
     } catch (error) {
         console.error("Error generating Blink invoice:", error);
         throw error;
