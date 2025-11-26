@@ -60,8 +60,7 @@ async function loadWordList() {
         .map(w => w.toUpperCase());
 }
 
-function startNewGame() {
-
+async function startNewGame() {
     inputLocked = false;
     isFocusSet = false;
     document.addEventListener('keydown', handleFirstKeypress);
@@ -79,9 +78,70 @@ function startNewGame() {
 
     targetWord = WORDS[Math.floor(Math.random() * WORDS.length)];
 
+    const stats = JSON.parse(localStorage.getItem('turtleStats')) || { played: 0, won: 0, currentStreak: 0, maxStreak: 0, guessDistribution: [0,0,0,0,0,0] };
+    
+    if (stats.played >= 3) {
+        await handlePayment();
+    }
+
     closeModal('game-over-modal');
     closeModal('help-modal');
     closeModal('stats-modal');
+}
+
+async function handlePayment() {
+    if (typeof WebLN === 'undefined') {
+        alert("WebLN is not loaded or available in your browser.");
+        return;
+    }
+
+    try {
+        const webln = await WebLN.requestProvider();
+        if (!webln) {
+            alert("Please install a WebLN wallet to proceed with payment.");
+            return;
+        }
+
+        const lightningAddress = "jasonbohio@getalby.com";
+
+        const invoiceRequest100 = await generateInvoiceForAddress(lightningAddress, 100);
+        console.log("Generated invoice for 100 sats:", invoiceRequest100);
+
+        await webln.sendPayment(invoiceRequest100);
+        alert("Payment of 100 sats successful!");
+
+        const tip = confirm("Would you like to tip 10,000 sats?");
+        if (tip) {
+            const invoiceRequestTip = await generateInvoiceForAddress(lightningAddress, 10000);
+            console.log("Generated tip invoice for 10,000 sats:", invoiceRequestTip);
+            await webln.sendPayment(invoiceRequestTip);
+            alert("Tip of 10,000 sats successful!");
+        }
+
+    } catch (error) {
+        console.error("Payment failed:", error);
+        alert("Payment failed. Please try again.");
+    }
+}
+
+async function generateInvoiceForAddress(address, amountSats) {
+    if (typeof WebLN === 'undefined') {
+        throw new Error("WebLN is not available in your browser.");
+    }
+
+    try {
+        const webln = await WebLN.requestProvider();
+
+        const invoice = await webln.payRequest({
+            amount: amountSats,
+            destination: address
+        });
+
+        return invoice;
+    } catch (error) {
+        console.error("Error generating invoice:", error);
+        throw new Error("Failed to generate Lightning invoice.");
+    }
 }
 
 function createGameBoard() {
