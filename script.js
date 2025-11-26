@@ -103,47 +103,67 @@ async function startNewGame() {
 
 
 async function handlePayment() {
-  if (typeof WebLN === 'undefined') {
-    alert("WebLN is not loaded or available in your browser.");
-    return false;
-  }
-
-  try {
-    const webln = await WebLN.requestProvider();
-    await webln.enable();
-
-    const invoice21 = await generateInvoiceForBlink(21);
-    console.log("Invoice for 21 sats:", invoice21);
-
-    await webln.sendPayment(invoice21);
-    alert("Payment of 21 sats successful!");
-
-    const tip = confirm("Would you like to tip 10,000 sats?");
-    if (tip) {
-      const invoiceTip = await generateInvoiceForBlink(10000);
-      console.log("Invoice for 10,000 sats:", invoiceTip);
-      await webln.sendPayment(invoiceTip);
-      alert("Tip of 10,000 sats successful!");
+    if (typeof WebLN === 'undefined') {
+        showMessage("WebLN is not available in your browser.");
+        return false;
     }
 
-    return true;
+    try {
+        const webln = await WebLN.requestProvider();
+        await webln.enable();
 
-  } catch (error) {
-    console.error("Payment failed:", error);
-    alert("Payment failed. Please try again.");
-    return false;
-  }
+        const invoice21 = await generateInvoiceForBlink(21);
+        if (!invoice21) throw new Error("No invoice returned from server");
+
+        await webln.sendPayment(invoice21);
+        showMessage("Payment of 21 sats successful!");
+
+        const tip = confirm("Would you like to tip 10,000 sats?");
+        if (tip) {
+            const invoiceTip = await generateInvoiceForBlink(10000);
+            if (invoiceTip) {
+                await webln.sendPayment(invoiceTip);
+                showMessage("Tip of 10,000 sats successful!");
+            }
+        }
+
+        return true;
+
+    } catch (error) {
+        console.error("Payment failed:", error);
+        showMessage("Payment failed. Please try again.");
+        return false;
+    }
 }
 
 async function generateInvoiceForBlink(amountSats) {
-  const resp = await fetch('/api/create-invoice', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
-  });
+    try {
+        const resp = await fetch('/api/create-invoice', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
+        });
 
-  const { paymentRequest } = await resp.json();
-  return paymentRequest;
+        const text = await resp.text();
+        console.log("Blink response text:", text);
+
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch {
+            throw new Error("Blink API returned invalid JSON");
+        }
+
+        if (!data.paymentRequest) {
+            throw new Error("Blink API did not return a paymentRequest");
+        }
+
+        return data.paymentRequest;
+
+    } catch (err) {
+        console.error("Error generating invoice for Blink:", err);
+        return null;
+    }
 }
 
 function createGameBoard() {
