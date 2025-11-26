@@ -78,12 +78,17 @@ async function startNewGame() {
 
     targetWord = WORDS[Math.floor(Math.random() * WORDS.length)];
 
-    const stats = JSON.parse(localStorage.getItem('turtleStats')) || { played: 0, won: 0, currentStreak: 0, maxStreak: 0, guessDistribution: [0,0,0,0,0,0] };
-    
+    const stats = JSON.parse(localStorage.getItem('turtleStats')) || {
+        played: 0, won: 0, currentStreak: 0, maxStreak: 0, guessDistribution: [0,0,0,0,0,0]
+    };
+
     if (stats.played >= 3) {
+        showMessage("Payment required to continue playing...");
+
         const paymentSuccess = await handlePayment();
         if (!paymentSuccess) {
-            alert("Payment required to start the game. Please try again.");
+            showMessage("Payment not completed. Game cannot start.");
+            inputLocked = true;
             return;
         }
     }
@@ -91,7 +96,11 @@ async function startNewGame() {
     closeModal('game-over-modal');
     closeModal('help-modal');
     closeModal('stats-modal');
+
+    inputLocked = false;
+    showMessage("Game started! Good luck!");
 }
+
 
 async function handlePayment() {
   if (typeof WebLN === 'undefined') {
