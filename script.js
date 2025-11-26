@@ -132,12 +132,13 @@ async function generateInvoiceForAddress(address, amountSats) {
     try {
         const webln = await WebLN.requestProvider();
 
-        const invoice = await webln.payRequest({
+        const invoice = await webln.createInvoice({
             amount: amountSats,
-            destination: address
+            description: `Payment to ${address}`,
+            memo: "Turtle Game Payment"
         });
 
-        return invoice;
+        return invoice.paymentRequest;
     } catch (error) {
         console.error("Error generating invoice:", error);
         throw new Error("Failed to generate Lightning invoice.");
