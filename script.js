@@ -81,7 +81,11 @@ async function startNewGame() {
     const stats = JSON.parse(localStorage.getItem('turtleStats')) || { played: 0, won: 0, currentStreak: 0, maxStreak: 0, guessDistribution: [0,0,0,0,0,0] };
     
     if (stats.played >= 3) {
-        await handlePayment();
+        const paymentSuccess = await handlePayment();
+        if (!paymentSuccess) {
+            alert("Payment required to start the game. Please try again.");
+            return;
+        }
     }
 
     closeModal('game-over-modal');
@@ -92,14 +96,14 @@ async function startNewGame() {
 async function handlePayment() {
     if (typeof WebLN === 'undefined') {
         alert("WebLN is not loaded or available in your browser.");
-        return;
+        return false;
     }
 
     try {
         const webln = await WebLN.requestProvider();
         if (!webln) {
             alert("Please install a WebLN wallet to proceed with payment.");
-            return;
+            return false;
         }
 
         const lightningAddress = "jasonbohio@getalby.com";
@@ -118,9 +122,12 @@ async function handlePayment() {
             alert("Tip of 10,000 sats successful!");
         }
 
+        return true;
+
     } catch (error) {
         console.error("Payment failed:", error);
         alert("Payment failed. Please try again.");
+        return false;
     }
 }
 
