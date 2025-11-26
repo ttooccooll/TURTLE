@@ -106,20 +106,15 @@ async function handlePayment() {
             return false;
         }
 
-        const lightningAddress = "jasonbohio@getalby.com";
-
-        const invoiceRequest21 = await generateInvoiceForAddress(lightningAddress, 21);
-        console.log("Generated invoice for 21 sats:", invoiceRequest21);
-
-        await webln.sendPayment(invoiceRequest21);
+        const mainInvoice = "lno1pqp9yzq2yscxxc3hx4snswpdvgurvdedxscrvepd8ymx2v3dvejnscmpx3nrvcfexgepvggzz220lavkujt662gze403jee7jqsf20vsvfwk3s3wjx6353wqxtfs";
+        await webln.sendPayment(mainInvoice);
         alert("Payment of 21 sats successful!");
 
-        const tip = confirm("Would you like to tip 10,000 sats?");
-        if (tip) {
-            const invoiceRequestTip = await generateInvoiceForAddress(lightningAddress, 10000);
-            console.log("Generated tip invoice for 10,000 sats:", invoiceRequestTip);
-            await webln.sendPayment(invoiceRequestTip);
-            alert("Tip of 10,000 sats successful!");
+        const wantsTip = confirm("Would you like to tip?");
+        if (wantsTip) {
+            const tipInvoice = "lno1pqzqzsr0gq9zgvrrvgmn2cfc8qkkywpkxukngvpkvsknjdn9xgkkvefcvdsnge3kvyunyvskyypp998l7ktwf9ad9ypv6hcevulfqgy48kgxyhtgcghfrdg6ghqr95c";
+            await webln.sendPayment(tipInvoice);
+            alert("Tip payment successful!");
         }
 
         return true;
