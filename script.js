@@ -73,6 +73,8 @@ async function startNewGame() {
     gameOver = false;
     letterStates = {};
 
+    document.getElementById('tip-btn').style.display = 'none';
+
     createGameBoard();
     resetKeyboard();
 
@@ -152,12 +154,9 @@ async function handlePayment() {
     await payInvoice(invoice);
     alert("Payment of 21 sats successful!");
 
-    const tip = confirm("Would you like to tip 10,000 sats?");
-    if (tip) {
-      const invoiceTip = await generateInvoiceForBlink(10000);
-      await payInvoice(invoiceTip);
-      alert("Tip of 10,000 sats successful!");
-    }
+    const tipBtn = document.getElementById('tip-btn');
+    tipBtn.style.display = 'inline-block';
+    tipBtn.disabled = false;
 
     return true;
   } catch (err) {
@@ -423,6 +422,25 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     document.getElementById('stats-btn').addEventListener('click', () => showModal('stats-modal'));
     startNewGame();
 });
+
+document.getElementById('tip-btn').addEventListener('click', async () => {
+    const tipBtn = document.getElementById('tip-btn');
+    tipBtn.disabled = true;
+
+    try {
+        const invoiceTip = await generateInvoiceForBlink(10000);
+        await payInvoice(invoiceTip);
+        alert("Tip of 10,000 sats successful!");
+
+        tipBtn.style.display = 'none';
+
+    } catch (err) {
+        console.error("Tip payment failed:", err);
+        alert("Tip failed. Please try again.");
+        tipBtn.disabled = false;
+    }
+});
+
 
 window.resetGame = startNewGame;
 window.closeModal = closeModal;

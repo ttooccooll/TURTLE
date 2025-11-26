@@ -297,6 +297,31 @@
             text-transform: uppercase;
             color: #818384;
         }
+        #tip-btn {
+            background: linear-gradient(135deg, #f7931a, #ffae42);
+            border: none;
+            color: #fff;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: tipPulse 2s infinite ease-in-out;
+            font-weight: bold;
+            box-shadow: 0 0 12px rgba(255, 170, 50, 0.6);
+        }
+
+        #tip-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 18px rgba(255, 170, 50, 0.9);
+        }
+
+        @keyframes tipPulse {
+            0% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 170, 50, 0.6); }
+            50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(255, 170, 50, 1); }
+            100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 170, 50, 0.6); }
+        }
 
         @media (max-width: 500px) {
             header {
