@@ -310,14 +310,17 @@
                 height: 42px;
                 font-size: 24px;
             }
-            
+            #game-board {
+                padding-top: 0;
+            }
             .key {
-                height: 40px;
-                min-width: 24px;
+                height: 44px;
+                min-width: 28px;
                 font-size: 12px;
             }
             #keyboard {
                 gap: 4px;
+                padding-top: 0;
             }
             .keyboard-row {
                 gap: 4px;
