@@ -104,12 +104,15 @@ async function handlePayment() {
     await webln.enable();
 
     const invoice21 = await generateInvoiceForBlink(21);
+    console.log("Invoice for 21 sats:", invoice21);
+
     await webln.sendPayment(invoice21);
     alert("Payment of 21 sats successful!");
 
     const tip = confirm("Would you like to tip 10,000 sats?");
     if (tip) {
       const invoiceTip = await generateInvoiceForBlink(10000);
+      console.log("Invoice for 10,000 sats:", invoiceTip);
       await webln.sendPayment(invoiceTip);
       alert("Tip of 10,000 sats successful!");
     }
