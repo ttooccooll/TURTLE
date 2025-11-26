@@ -1,80 +1,72 @@
 import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
-  // Only POST requests allowed
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const { amount, memo } = req.body;
 
-  // Validate amount
   if (!amount || isNaN(amount)) {
     return res.status(400).json({ error: 'Amount is required and must be a number' });
   }
 
   try {
-    // Load environment variables
     const BLINK_SERVER = process.env.BLINK_SERVER;
     const BLINK_API_KEY = process.env.BLINK_API_KEY;
     const BLINK_WALLET_ID = process.env.BLINK_WALLET_ID;
 
-    if (!BLINK_SERVER || !BLINK_API_KEY || !BLINK_WALLET_ID) {
-      return res.status(500).json({ error: 'Blink server or API key not set' });
-    }
-
-    // GraphQL query to create an invoice
     const query = `
-      mutation CreateInvoice($walletId: ID!, $amount: Int!, $memo: String) {
-        createInvoice(input: {walletId: $walletId, amount: $amount, memo: $memo}) {
-          invoice { paymentRequest id }
+      mutation LnInvoiceCreate($input: LnInvoiceCreateInput!) {
+        lnInvoiceCreate(input: $input) {
+          invoice {
+            paymentRequest
+            paymentHash
+            paymentSecret
+            satoshis
+          }
+          errors {
+            message
+          }
         }
       }
     `;
 
     const variables = {
-      walletId: BLINK_WALLET_ID,
-      amount: parseInt(amount),
-      memo: memo || 'Turtle Game Payment',
+      input: {
+        walletId: BLINK_WALLET_ID,
+        amount: amount.toString(),
+        memo: memo || "Turtle Game Payment"
+      }
     };
 
-    // Send request to Blink
     const response = await fetch(BLINK_SERVER, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': BLINK_API_KEY,
+        'X-API-KEY': BLINK_API_KEY
       },
-      body: JSON.stringify({ query, variables }),
+      body: JSON.stringify({ query, variables })
     });
 
-    const text = await response.text();
-    console.log('Blink raw response:', text); // Log raw response for debugging
+    const json = await response.json();
 
-    // Try to parse JSON
-    let json;
-    try {
-      json = JSON.parse(text);
-    } catch (e) {
-      return res.status(500).json({ error: 'Blink did not return valid JSON', details: text });
+    if (json.errors && json.errors.length > 0) {
+      console.error("Blink API returned GraphQL errors:", json.errors);
+      return res.status(500).json({ error: 'Failed to create invoice', details: json.errors });
     }
 
-    // Check for GraphQL errors
-    if (json.errors) {
-      console.error('Blink API returned errors:', json.errors);
-      return res.status(500).json({ error: 'Blink API returned errors', details: json.errors });
+    if (json.data.lnInvoiceCreate.errors && json.data.lnInvoiceCreate.errors.length > 0) {
+      console.error("Blink API returned invoice errors:", json.data.lnInvoiceCreate.errors);
+      return res.status(500).json({ error: 'Failed to create invoice', details: json.data.lnInvoiceCreate.errors });
     }
 
-    // Make sure invoice exists
-    if (!json.data?.createInvoice?.invoice?.paymentRequest) {
-      return res.status(500).json({ error: 'Blink API did not return a payment request', details: json });
-    }
+    const paymentRequest = json.data.lnInvoiceCreate.invoice.paymentRequest;
 
-    // Success
-    return res.status(200).json({ paymentRequest: json.data.createInvoice.invoice.paymentRequest });
+    return res.status(200).json({ paymentRequest });
 
-  } catch (err) {
-    console.error('Server error generating Blink invoice:', err);
-    return res.status(500).json({ error: 'Server error generating invoice', details: err.message });
+  } catch (error) {
+    console.error("Server error generating Blink invoice:", error);
+    return res.status(500).json({ error: 'Server error generating invoice' });
   }
 }
