@@ -101,37 +101,23 @@ async function startNewGame() {
     showMessage("Game started! Good luck!");
 }
 
-
 async function handlePayment() {
-    if (typeof WebLN === 'undefined') {
-        showMessage("WebLN is not available in your browser.");
-        return false;
-    }
-
     try {
-        const webln = await WebLN.requestProvider();
-        await webln.enable();
-
         const invoice21 = await generateInvoiceForBlink(21);
-        if (!invoice21) throw new Error("No invoice returned from server");
-
-        await webln.sendPayment(invoice21);
-        showMessage("Payment of 21 sats successful!");
+        await payInvoice(invoice21);
+        alert("Payment of 21 sats successful!");
 
         const tip = confirm("Would you like to tip 10,000 sats?");
         if (tip) {
             const invoiceTip = await generateInvoiceForBlink(10000);
-            if (invoiceTip) {
-                await webln.sendPayment(invoiceTip);
-                showMessage("Tip of 10,000 sats successful!");
-            }
+            await payInvoice(invoiceTip);
+            alert("Tip of 10,000 sats successful!");
         }
 
         return true;
-
     } catch (error) {
         console.error("Payment failed:", error);
-        showMessage("Payment failed. Please try again.");
+        alert("Payment failed. Please try again.");
         return false;
     }
 }
@@ -144,25 +130,32 @@ async function generateInvoiceForBlink(amountSats) {
             body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
         });
 
-        const text = await resp.text();
-        console.log("Blink response text:", text);
-
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch {
-            throw new Error("Blink API returned invalid JSON");
-        }
-
-        if (!data.paymentRequest) {
-            throw new Error("Blink API did not return a paymentRequest");
+        const data = await resp.json();
+        if (!resp.ok || !data.paymentRequest) {
+            console.error("Blink API returned an error:", data);
+            throw new Error("Failed to generate invoice");
         }
 
         return data.paymentRequest;
+    } catch (error) {
+        console.error("Error generating Blink invoice:", error);
+        throw error;
+    }
+}
 
-    } catch (err) {
-        console.error("Error generating invoice for Blink:", err);
-        return null;
+async function payInvoice(paymentRequest) {
+    if (typeof WebLN === 'undefined') {
+        alert("WebLN is not available in your browser. Please install a WebLN wallet.");
+        throw new Error("WebLN not available");
+    }
+
+    try {
+        const webln = await WebLN.requestProvider();
+        await webln.enable();
+        await webln.sendPayment(paymentRequest);
+    } catch (error) {
+        console.error("WebLN payment failed:", error);
+        throw error;
     }
 }
 
