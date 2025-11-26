@@ -314,4 +314,8 @@
                 min-width: 54px;
                 font-size: 10px;
             }
+            #keyboard {
+
+                max-width: 100vw;
+            }
         }
