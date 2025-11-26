@@ -129,7 +129,16 @@ async function generateInvoiceForBlink(amountSats) {
     body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
   });
 
-  const data = await resp.json();
+  let data;
+  const contentType = resp.headers.get('content-type');
+
+  if (contentType && contentType.includes('application/json')) {
+    data = await resp.json();
+  } else {
+    const text = await resp.text();
+    console.error('Server returned non-JSON:', text);
+    throw new Error('Failed to generate invoice: server returned non-JSON response');
+  }
 
   if (!resp.ok || !data.paymentRequest) {
     console.error("Blink API error:", data);
