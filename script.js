@@ -150,9 +150,9 @@ async function payInvoice(paymentRequest) {
 
 async function handlePayment() {
   try {
-    const invoice = await generateInvoiceForBlink(21);
+    const invoice = await generateInvoiceForBlink(100);
     await payInvoice(invoice);
-    alert("Payment of 21 sats successful!");
+    alert("Payment of 100 sats successful!");
 
     const tipBtn = document.getElementById('tip-btn');
     tipBtn.style.display = 'inline-block';
