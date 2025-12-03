@@ -42,8 +42,6 @@ async function enableWebLN() {
   }
 }
 
-enableWebLN();
-
 function setSafeTimeout(fn, delay) {
     const id = setTimeout(fn, delay);
     activeTimeouts.push(id);
