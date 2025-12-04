@@ -61,12 +61,6 @@ function getWordListURL(lang) {
     return `/words/${map[lang]}`;
 }
 
-const select = document.getElementById('language-select');
-select.addEventListener('change', () => {
-    if (select.value === "") {
-        alert("Please select a language!");
-    }
-});
 
 async function loadWordList(language = 'english') {
     const url = getWordListURL(language);
