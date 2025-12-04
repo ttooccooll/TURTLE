@@ -9,6 +9,7 @@ let gameOver = false;
 let letterStates = {};
 let activeTimeouts = [];
 let isFocusSet = false;
+let currentLanguage = 'en';
 
 const gameBoard = document.getElementById('game-board');
 const messageContainer = document.getElementById('message-container');
@@ -47,8 +48,9 @@ function setSafeTimeout(fn, delay) {
     activeTimeouts.push(id);
 }
 
-async function loadWordList() {
-    const url = "https://darkermango.github.io/5-Letter-words/words.txt";
+async function loadWordList(language = 'en') {
+    const url = `https://darkermango.github.io/5-Letter-words/${language}.txt`;
+
     const response = await fetch(url);
     const text = await response.text();
     WORDS = text
@@ -413,6 +415,9 @@ document.addEventListener('keydown', (e)=>{
 });
 
 document.addEventListener('DOMContentLoaded', async ()=>{
+    const savedLang = localStorage.getItem('turtleLang') || 'en';
+    currentLanguage = savedLang;
+    document.getElementById('language-select').value = savedLang;
     await loadWordList();
     setupKeyboard();
     loadStats();
@@ -420,6 +425,15 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     document.getElementById('stats-btn').addEventListener('click', () => showModal('stats-modal'));
     startNewGame();
 });
+
+document.getElementById('language-select').addEventListener('change', async (e) => {
+    currentLanguage = e.target.value;
+    localStorage.setItem('turtleLang', currentLanguage);
+
+    await loadWordList(currentLanguage);
+    startNewGame();
+});
+
 
 document.getElementById('tip-btn').addEventListener('click', async () => {
     const tipBtn = document.getElementById('tip-btn');

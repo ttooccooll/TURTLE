@@ -297,6 +297,10 @@
             text-transform: uppercase;
             color: #818384;
         }
+        #language-select {
+            background-color: #818384;
+            margin-top: 5px;
+        }
         #tip-btn {
             background: linear-gradient(135deg, #f7931a, #ffae42);
             border: none;
