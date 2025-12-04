@@ -49,7 +49,7 @@ function setSafeTimeout(fn, delay) {
 }
 
 async function loadWordList(language = 'en') {
-    const url = `https://darkermango.github.io/5-Letter-words/${language}.txt`;
+    const url = `https://github.com/ttooccooll/TURTLE/blob/main/words/${language}.txt`;
 
     const response = await fetch(url);
     const text = await response.text();
