@@ -59,6 +59,7 @@ function getWordListURL(lang) {
         italian: "italian.txt",
         zulu: "zulu.txt",
         swahili: "swahili.txt",
+        portuguese: "portuguese.txt",
     };
 
     return `/words/${map[lang]}`;
