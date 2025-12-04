@@ -48,10 +48,28 @@ function setSafeTimeout(fn, delay) {
     activeTimeouts.push(id);
 }
 
-async function loadWordList(language = 'en') {
-    const url = `https://github.com/ttooccooll/TURTLE/blob/main/words/${language}.txt`;
+function getWordListURL(lang) {
+    const map = {
+        english: "english.txt",
+        spanish: "spanish.txt",
+        french: "french.txt",
+        german: "german.txt"
+    };
+
+    return `https://github.com/ttooccooll/TURTLE/blob/main/words/${map[lang]}`;
+}
+
+async function loadWordList(language = 'english') {
+    const url = getWordListURL(language);
 
     const response = await fetch(url);
+
+    if (!response.ok) {
+        console.error("Failed to load word list:", url, response.status);
+        WORDS = [];
+        return;
+    }
+
     const text = await response.text();
     WORDS = text
         .split("\n")
