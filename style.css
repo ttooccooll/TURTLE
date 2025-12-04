@@ -298,11 +298,13 @@
             color: #818384;
         }
         #language-select {
+            border-color: #565758;
             background-color: #818384;
             margin-top: 5px;
         }
         #language-select:focus {
             outline: none;
+            color: #000;
         }
         #tip-btn {
             background: linear-gradient(135deg, #f7931a, #ffae42);
