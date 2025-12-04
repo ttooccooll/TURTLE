@@ -302,6 +302,9 @@
             background-color: #818384;
             margin-top: 5px;
             -webkit-text-fill-color: #000;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;   
         }
         #language-select:focus {
             outline: none;
