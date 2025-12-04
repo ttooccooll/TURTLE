@@ -54,8 +54,8 @@ function getWordListURL(lang) {
         spanish: "spanish.txt",
         french: "french.txt",
         german: "german.txt",
-        afrikaans: "afrikaans",
-        xhosa: "xhosa"
+        afrikaans: "afrikaans.txt",
+        xhosa: "xhosa.txt"
     };
 
     return `/words/${map[lang]}`;
