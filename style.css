@@ -301,6 +301,9 @@
             background-color: #818384;
             margin-top: 5px;
         }
+        #language-select:focus {
+            outline: none;
+        }
         #tip-btn {
             background: linear-gradient(135deg, #f7931a, #ffae42);
             border: none;

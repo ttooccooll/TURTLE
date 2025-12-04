@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     const savedLang = localStorage.getItem('turtleLang') || 'en';
     currentLanguage = savedLang;
     document.getElementById('language-select').value = savedLang;
-    await loadWordList();
+    await loadWordList(currentLanguage);
     setupKeyboard();
     loadStats();
     document.getElementById('help-btn').addEventListener('click', () => showModal('help-modal'));

@@ -2885,7 +2885,6 @@ lapel
 jaunt
 whelp
 cleat
-gauzy
 dirge
 edits
 wormy
