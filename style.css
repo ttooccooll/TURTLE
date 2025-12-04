@@ -297,20 +297,45 @@
             text-transform: uppercase;
             color: #818384;
         }
+        .select-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 200px;
+        }
+
         #language-select {
-            border-color: #565758;
+            width: 100%;
+            padding: 10px 35px 10px 10px;
+            border: 1px solid #565758;
+            border-radius: 5px;
             background-color: #818384;
-            margin-top: 5px;
+            color: #000;
             -webkit-text-fill-color: #000;
+            font-size: 16px;
+            cursor: pointer;
+
             -webkit-appearance: none;
             -moz-appearance: none;
-            appearance: none;   
+            appearance: none;
         }
+
         #language-select:focus {
             outline: none;
+            border-color: #565758;
             color: #000;
-            -webkit-text-fill-color: #000;    
+            -webkit-text-fill-color: #000;
         }
+        .select-wrapper::after {
+            content: '▼';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #000;
+            font-size: 0.7em;
+        }
+
         #tip-btn {
             background: linear-gradient(135deg, #f7931a, #ffae42);
             border: none;
