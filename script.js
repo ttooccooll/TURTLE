@@ -56,8 +56,9 @@ function getWordListURL(lang) {
         german: "german.txt"
     };
 
-    return `https://github.com/ttooccooll/TURTLE/main/words/${map[lang]}`;
+    return `/words/${map[lang]}`;
 }
+
 
 async function loadWordList(language = 'english') {
     const url = getWordListURL(language);
