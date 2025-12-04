@@ -308,10 +308,10 @@
             left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: #888;
+            color: #000000;
             pointer-events: none;
             transition: 0.2s ease all;
-            background-color: #818384;
+            background-color: #565758;
             padding: 0 4px;
             font-size: 16px;
         }
@@ -320,7 +320,7 @@
             padding: 8px 35px 8px 10px;
             border: 1px solid #565758;
             border-radius: 5px;
-            background-color: #818384;
+            background-color: #565758;
             color: #000;
             -webkit-text-fill-color: #000;
             font-size: 16px;
