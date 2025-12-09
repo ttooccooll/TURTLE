@@ -98,7 +98,7 @@ async function startNewGame() {
     gameOver = false;
     letterStates = {};
 
-    document.getElementById('tip-btn').style.display = 'none';
+    document.getElementById('tip-btn').style.display = 'inline-block';
 
     createGameBoard();
     resetKeyboard();
@@ -468,8 +468,6 @@ document.getElementById('tip-btn').addEventListener('click', async () => {
         const invoiceTip = await generateInvoiceForBlink(10000);
         await payInvoice(invoiceTip);
         alert("Tip of 10,000 sats successful!");
-
-        tipBtn.style.display = 'none';
 
     } catch (err) {
         console.error("Tip payment failed:", err);
