@@ -1,13 +1,8 @@
 abade
-abafa
-abalo
-abafo
 abalo
 abrir
 acaso
 achar
-acima
-acode
 aceno
 aceso
 acima
@@ -95,7 +90,6 @@ citar
 claro
 clima
 cobre
-cobri
 coisa
 colar
 comer
@@ -116,7 +110,6 @@ denso
 dente
 dizer
 doado
-doado
 dobro
 doido
 dores
@@ -128,7 +121,6 @@ eleva
 elite
 enfim
 ereto
-errar
 errar
 estar
 etapa
@@ -148,7 +140,6 @@ feria
 ferir
 feroz
 fiado
-fibra
 ficar
 ficha
 filho
@@ -173,13 +164,11 @@ gordo
 grato
 grave
 grupo
-gueto
 harpa
 haver
 humor
 ideal
 igual
-impor
 induz
 justo
 lagoa
@@ -207,7 +196,6 @@ meigo
 menos
 mesmo
 misto
-modal
 molho
 monte
 motel
@@ -226,7 +214,6 @@ nunca
 obrar
 obter
 ocaso
-odiar
 olhar
 ombro
 ordem
@@ -303,7 +290,6 @@ subir
 sugar
 surda
 surdo
-tarde
 tanto
 tarde
 temer
@@ -325,8 +311,6 @@ trigo
 troca
 truco
 turma
-ufano
-ultra
 unido
 vagar
 vazio
