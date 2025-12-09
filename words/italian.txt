@@ -31,7 +31,6 @@ assai
 atomi
 atque
 attua
-aussi
 avere
 avete
 aveva
@@ -103,7 +102,6 @@ casse
 causa
 cause
 cella
-celui
 cenni
 cenno
 cento
@@ -139,7 +137,6 @@ colpo
 colta
 colto
 comma
-comme
 commi
 conta
 conte
@@ -224,14 +221,11 @@ dotti
 dotto
 dovea
 dover
-droit
 dubbi
 ebrei
 ebreo
 edito
-einer
 entra
-entre
 entro
 eorum
 epoca
@@ -252,7 +246,6 @@ etico
 extra
 facce
 facto
-faire
 fallo
 falsa
 false
@@ -291,7 +284,6 @@ figli
 fiore
 fiori
 firma
-first
 fissa
 fisse
 fissi
@@ -490,7 +482,6 @@ nervo
 nesso
 netta
 netto
-nicht
 niuno
 nobis
 nonna
@@ -498,7 +489,6 @@ nonno
 norma
 norme
 notai
-notre
 notte
 notti
 nozze
@@ -577,14 +567,12 @@ piena
 piene
 pieni
 pieno
-place
 plebe
 poche
 pochi
 poema
 poeta
 poeti
-point
 polso
 pompa
 ponte
@@ -822,7 +810,6 @@ tassi
 tasso
 tempi
 tempo
-temps
 tenda
 tende
 tener
@@ -853,7 +840,6 @@ torre
 torri
 torto
 tosto
-toute
 trama
 treno
 trono
@@ -924,7 +910,6 @@ video
 viene
 vieta
 villa
-ville
 vinti
 vinto
 viola
