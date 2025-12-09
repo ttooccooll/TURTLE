@@ -337,7 +337,6 @@ golfo
 gomma
 gradi
 grado
-grand
 grani
 grano
 grato
