@@ -2,7 +2,6 @@ abbia
 abile
 abiti
 abito
-about
 abusi
 abuso
 acidi
@@ -15,7 +14,6 @@ acuto
 aerea
 aerei
 aereo
-after
 agire
 anglo
 anima
@@ -34,9 +32,6 @@ atomi
 atque
 attua
 aussi
-autem
-autre
-avait
 avere
 avete
 aveva
@@ -72,9 +67,7 @@ bocca
 bolla
 bollo
 bombe
-bontà
 bordo
-Borgo
 borsa
 bosco
 brani
@@ -82,7 +75,6 @@ brano
 bravo
 breve
 brevi
-Bruno
 buona
 buone
 buoni
@@ -101,20 +93,16 @@ campo
 canta
 canti
 canto
-Capua
-Carlo
 carne
 carni
 carri
 carro
 carta
 carte
-Cassa
 casse
 causa
 cause
 cella
-celle
 celui
 cenni
 cenno
@@ -126,7 +114,6 @@ certe
 certi
 certo
 cessa
-cette
 cicli
 ciclo
 cieca
@@ -137,7 +124,6 @@ cifra
 cifre
 cinta
 circa
-città
 clero
 clima
 cogli
@@ -152,7 +138,6 @@ colpi
 colpo
 colta
 colto
-colui
 comma
 comme
 commi
@@ -182,12 +167,10 @@ creda
 crede
 credo
 crisi
-Croce
 culti
 culto
 cuore
 cuori
-Curia
 curva
 curve
 dagli
@@ -197,11 +180,9 @@ dallo
 dando
 danni
 danno
-Dante
 danza
 darne
 darsi
-David
 dazio
 debba
 debbo
@@ -222,11 +203,8 @@ detta
 dette
 detti
 detto
-dicti
-dicto
 dieci
 diede
-Diego
 dieta
 direi
 dirlo
@@ -241,7 +219,6 @@ dolci
 donde
 donna
 donne
-Doria
 dorso
 dotti
 dotto
@@ -249,7 +226,6 @@ dovea
 dover
 droit
 dubbi
-Duomo
 ebrei
 ebreo
 edito
@@ -303,7 +279,6 @@ fatto
 ferma
 fermi
 fermo
-Ferri
 ferro
 festa
 feste
@@ -333,7 +308,6 @@ fondi
 fondo
 fonte
 fonti
-Forlì
 forma
 forme
 forno
@@ -350,7 +324,6 @@ frasi
 frate
 frati
 freno
-Freud
 frode
 fuoco
 fuori
@@ -394,8 +367,6 @@ gusti
 gusto
 hanno
 homme
-Iddio
-India
 infra
 inizi
 inter
@@ -414,7 +385,6 @@ largo
 larve
 lasci
 latte
-Lecce
 legge
 leggi
 leghe
@@ -424,7 +394,6 @@ lenta
 lente
 lenti
 lento
-Leone
 letta
 letti
 letto
@@ -513,7 +482,6 @@ mutuo
 narra
 nasce
 negli
-Negri
 nella
 nelle
 nello
@@ -546,7 +514,6 @@ offre
 oltre
 ombra
 ombre
-Omero
 omnes
 omnia
 onere
@@ -596,7 +563,6 @@ pesca
 pesce
 pesci
 peste
-Peter
 petto
 pezzi
 pezzo
@@ -611,8 +577,6 @@ piena
 piene
 pieni
 pieno
-Piero
-pietà
 place
 plebe
 poche
@@ -639,9 +603,7 @@ posti
 posto
 poter
 pozzo
-Praga
 prati
-Prato
 preda
 pregi
 prego
@@ -651,7 +613,6 @@ presa
 prese
 presi
 preso
-Press
 presu
 prete
 preti
@@ -697,12 +658,10 @@ regni
 regno
 renda
 rende
-Renzo
 rerum
 resta
 resti
 resto
-restò
 retro
 retta
 rette
@@ -731,14 +690,12 @@ sacre
 sacri
 sacro
 saggi
-Saint
 saldo
 salto
 salva
 salvo
 sanno
 santi
-Santo
 saper
 sardo
 sarei
@@ -794,13 +751,8 @@ siede
 sieno
 siero
 siete
-Simon
-Siria
-Sisto
-Smith
 socio
 sodio
-Sofia
 sogni
 sogno
 solco
@@ -914,7 +866,6 @@ tutta
 tutte
 tutti
 tutto
-Udine
 udire
 udire
 udito
@@ -933,7 +884,6 @@ unico
 unita
 unità
 unite
-Uniti
 unito
 usano
 usare
@@ -964,8 +914,6 @@ venti
 vento
 verbo
 verde
-Verdi
-Verga
 versi
 verso
 veste
