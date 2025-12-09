@@ -35,7 +35,6 @@ avere
 avete
 aveva
 avevo
-avoir
 avrei
 avuta
 avuti
@@ -358,7 +357,6 @@ guisa
 gusti
 gusto
 hanno
-homme
 infra
 inizi
 inter
@@ -389,7 +387,6 @@ lento
 letta
 letti
 letto
-leurs
 libri
 libro
 lieto
@@ -446,14 +443,12 @@ mille
 minor
 mista
 misto
-moins
 molle
 molli
 molta
 molte
 molti
 molto
-monde
 mondi
 mondo
 monti
@@ -515,7 +510,6 @@ opere
 orale
 ormai
 ossia
-other
 ovest
 ovvio
 padre
@@ -780,7 +774,6 @@ stile
 stili
 stima
 studi
-study
 sugli
 sulla
 sulle
@@ -793,7 +786,6 @@ suono
 super
 supra
 tagli
-tamen
 tanta
 tante
 tanti
@@ -863,12 +855,10 @@ umano
 umile
 umili
 umore
-under
 unica
 unici
 unico
 unita
-unità
 unite
 unito
 usano
@@ -877,7 +867,6 @@ usata
 usate
 usati
 usato
-usque
 utile
 utili
 valga
