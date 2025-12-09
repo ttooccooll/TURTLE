@@ -136,7 +136,6 @@ feder
 feira
 feito
 feliz
-feria
 ferir
 feroz
 fiado
@@ -256,7 +255,6 @@ reino
 reler
 renda
 resto
-rifle
 rimar
 risco
 rocha
@@ -271,7 +269,6 @@ samba
 sanar
 santo
 sarar
-sarda
 serra
 servo
 sexta
