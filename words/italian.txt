@@ -29,7 +29,6 @@ archi
 asilo
 assai
 atomi
-atque
 attua
 avere
 avete
@@ -226,7 +225,6 @@ ebreo
 edito
 entra
 entro
-eorum
 epoca
 erano
 erasi
@@ -239,12 +237,10 @@ esiti
 esito
 esser
 etere
-etiam
 etica
 etico
 extra
 facce
-facto
 fallo
 falsa
 false
@@ -361,11 +357,9 @@ infra
 inizi
 inter
 invio
-ipsum
 isola
 isole
 italo
-iuris
 laghi
 laica
 laici
@@ -478,7 +472,6 @@ nesso
 netta
 netto
 niuno
-nobis
 nonna
 nonno
 norma
@@ -499,8 +492,6 @@ offre
 oltre
 ombra
 ombre
-omnes
-omnia
 onere
 oneri
 onore
@@ -626,7 +617,6 @@ quote
 radio
 raggi
 rango
-ratio
 razza
 razze
 reale
@@ -640,7 +630,6 @@ regni
 regno
 renda
 rende
-rerum
 resta
 resti
 resto
@@ -728,7 +717,6 @@ sfida
 siamo
 siano
 siasi
-sicut
 siede
 sieno
 siero
@@ -784,7 +772,6 @@ suona
 suoni
 suono
 super
-supra
 tagli
 tanta
 tante
