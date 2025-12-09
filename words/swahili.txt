@@ -1,6 +1,5 @@
 banda
 bango
-barua
 bembe
 bendi
 binti
@@ -34,7 +33,6 @@ jogoo
 kamba
 kanda
 kanga
-kasri
 katia
 kinda
 kinga
@@ -55,7 +53,6 @@ mapya
 marua
 mbegu
 mbuzi
-mdomo
 mfano
 mimba
 mlima
@@ -91,7 +88,6 @@ songa
 swala
 tambo
 tanga
-tembe
 tembo
 tenge
 tenga
