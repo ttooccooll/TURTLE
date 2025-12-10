@@ -10,6 +10,7 @@
         integrity="sha384-MpjpvOQqXz9nCoLUS/sR0bhLwGYuNPMOBN50jsqhnqAzDq0GiOI0u6oC5fHitzI2"
         crossorigin="anonymous">
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <script src="script.js" defer></script>
     <link rel="stylesheet" id="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -156,5 +157,14 @@
             <p id="game-over-message"></p>
             <div id="game-over-answer" style="margin: 20px 0;"></div>
             <button onclick="resetGame()">Play Again</button>
+        </div>
+    </div>
+
+    <div id="payment-qr-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('payment-qr-modal')">&times;</span>
+            <h2>Scan to Pay</h2>
+            <p id="qr-instruction">Use your Lightning wallet to scan the QR code:</p>
+            <canvas id="qr-code"></canvas>
         </div>
     </div>
