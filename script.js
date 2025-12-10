@@ -194,85 +194,22 @@ async function payInvoice(paymentRequest) {
   }
 }
 
-async function handlePayment(amountSats = 100) {
-    try {
-        const resp = await fetch('/api/create-invoice', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
-        });
+async function handlePayment() {
+  try {
+    const invoice = await generateInvoiceForBlink(100);
+    await payInvoice(invoice);
+    alert("Payment of 100 sats successful!");
 
-        if (!resp.ok) throw new Error('Failed to create invoice');
-        const data = await resp.json();
-        const invoice = data.paymentRequest;
-        const invoiceId = data.id;
+    const tipBtn = document.getElementById('tip-btn');
+    tipBtn.style.display = 'inline-block';
+    tipBtn.disabled = false;
 
-        if (typeof WebLN !== 'undefined') {
-            const webln = await WebLN.requestProvider();
-            await webln.enable();
-            await webln.sendPayment(invoice);
-            alert(`Payment of ${amountSats} sats successful!`);
-        } else {
-            const qrCanvas = document.getElementById('qr-code');
-            QRCode.toCanvas(qrCanvas, invoice, { width: 200 });
-
-            showModal('payment-qr-modal');
-
-            await waitForInvoicePaid(invoiceId);
-
-            closeModal('payment-qr-modal');
-            alert('Payment received! You can start playing now.');
-        }
-
-        const tipBtn = document.getElementById('tip-btn');
-        tipBtn.style.display = 'inline-block';
-        tipBtn.disabled = false;
-
-        return true;
-
-    } catch (err) {
-        console.error('Payment failed:', err);
-        alert('Payment failed. Please try again.');
-        return false;
-    }
-}
-
-async function showQrModal(invoice, invoiceId, amountSats) {
-    if (!window.QRCode) throw new Error('QRCode library not loaded');
-
-    await window.QRCode.toCanvas(document.getElementById('qr-code'), invoice);
-
-    showModal('payment-qr-modal');
-    document.getElementById('qr-instruction').textContent =
-        `Scan this QR code with your Lightning wallet to pay ${amountSats} sats`;
-
-    try {
-        await waitForInvoicePaid(invoiceId);
-        closeModal('payment-qr-modal');
-        alert('Payment received! You can start playing now.');
-    } catch (err) {
-        console.warn('QR payment not confirmed:', err);
-        alert('Payment not received. Please try again.');
-    }
-}
-
-async function waitForInvoicePaid(invoiceId, interval = 2000) {
-    return new Promise((resolve, reject) => {
-        const timer = setInterval(async () => {
-            try {
-                const resp = await fetch(`/api/check-invoice?id=${invoiceId}`);
-                if (!resp.ok) throw new Error('Failed to check invoice');
-                const data = await resp.json();
-                if (data.paid) {
-                    clearInterval(timer);
-                    resolve(true);
-                }
-            } catch (err) {
-                clearInterval(timer);
-                reject(err);
-            }
-        }, interval);
-    });
+    return true;
+  } catch (err) {
+    console.error("Payment failed:", err);
+    alert("Payment failed. Please try again.");
+    return false;
+  }
 }
 
 function createGameBoard() {
