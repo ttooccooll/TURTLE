@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     });
 
     const data = await resp.json();
-
+    console.log('Invoice check response:', data); 
     if (data.errors) {
       return res.status(500).json({ error: 'Blink GraphQL errors', details: data.errors });
     }
