@@ -358,6 +358,31 @@ function showMessage(text) {
     setSafeTimeout(() => messageContainer.classList.remove('show'), 2000);
 }
 
+async function reloadGameForLanguageChange() {
+    inputLocked = false;
+    isFocusSet = false;
+
+    activeTimeouts.forEach(id => clearTimeout(id));
+    activeTimeouts = [];
+
+    currentGuess = '';
+    currentRow = 0;
+    gameOver = false;
+    letterStates = {};
+
+    createGameBoard();
+    resetKeyboard();
+
+    targetWord = WORDS[Math.floor(Math.random() * WORDS.length)];
+
+    closeModal('game-over-modal');
+    closeModal('help-modal');
+    closeModal('stats-modal');
+
+    showMessage("Language changed — new word loaded!");
+}
+
+
 function showModal(modalId) { document.getElementById(modalId).classList.add('show'); }
 function closeModal(modalId) { document.getElementById(modalId).classList.remove('show'); }
 
@@ -477,7 +502,8 @@ document.getElementById('language-select').addEventListener('change', async (e) 
     localStorage.setItem('turtleLang', currentLanguage);
 
     await loadWordList(currentLanguage);
-    startNewGame();
+    reloadGameForLanguageChange();
+
 });
 
 
