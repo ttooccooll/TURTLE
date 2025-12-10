@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 
   try {
     const BLINK_SERVER = process.env.BLINK_SERVER;
-    const BLINK_API_KEY = process.env.BLINK_API_KEY; 
+    const BLINK_API_KEY = process.env.BLINK_API_KEY;
     const BLINK_WALLET_ID = process.env.BLINK_WALLET_ID;
 
     const query = `
