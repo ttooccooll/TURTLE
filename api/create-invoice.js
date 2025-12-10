@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import crypto from 'crypto';
 
-const invoiceMap = {};
+export const invoiceMap = {};
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') 
