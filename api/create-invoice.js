@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     const query = `
       mutation LnInvoiceCreate($input: LnInvoiceCreateInput!) {
         lnInvoiceCreate(input: $input) {
-          invoice { id paymentRequest }
+          invoice { paymentRequest }
           errors { message }
         }
       }
