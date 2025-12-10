@@ -195,6 +195,9 @@ async function payInvoice(paymentRequest) {
 }
 
 async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
+    const modalId = 'payment-qr-modal';
+    showModal(modalId);
+
     try {
         const resp = await fetch('/api/create-invoice', {
             method: 'POST',
@@ -208,13 +211,8 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         const invoice = data.paymentRequest;
         const invoiceId = data.id;
 
-        showModal('payment-qr-modal');
-
         const canvas = document.getElementById('qr-code');
-        if (!canvas) throw new Error('QR canvas not found');
-
         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-
         await QRCode.toCanvas(canvas, invoice, { width: 200 });
 
         const invoiceText = document.getElementById('invoice-text');
@@ -238,41 +236,46 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
                 paid = true;
                 statusEl.textContent = 'Payment received!';
                 await new Promise(r => setTimeout(r, 1500));
-                closeModal('payment-qr-modal');
+                closeModal(modalId);
                 return true;
             }
         }
-
     } catch (err) {
         console.error('QR payment failed:', err);
-        alert('Payment failed. Please try again.');
-        closeModal('payment-qr-modal');
+        statusEl.textContent = 'Payment failed. Please try again.';
         return false;
     }
 }
 
 
-
 async function handlePayment() {
+    const tipBtn = document.getElementById('tip-btn');
+    tipBtn.style.display = 'inline-block';
+    tipBtn.disabled = true;
+
     try {
         if (typeof WebLN !== 'undefined') {
-            const invoice = await generateInvoiceForBlink(100);
-            await payInvoice(invoice);
-            alert("Payment of 100 sats successful!");
-        } else {
-            const paid = await payWithQR(100, "Turtle Game Payment");
-            if (!paid) throw new Error("QR payment failed");
+            try {
+                const invoice = await generateInvoiceForBlink(100);
+                await payInvoice(invoice);
+                alert("Payment of 100 sats successful!");
+                tipBtn.disabled = false;
+                return true;
+            } catch (weblnErr) {
+                console.warn("WebLN payment failed, falling back to QR:", weblnErr);
+            }
         }
 
-        const tipBtn = document.getElementById('tip-btn');
-        tipBtn.style.display = 'inline-block';
-        tipBtn.disabled = false;
+        const qrSuccess = await payWithQR(100, "Turtle Game Payment");
+        if (!qrSuccess) throw new Error("QR payment failed");
 
+        tipBtn.disabled = false;
         return true;
 
     } catch (err) {
         console.error("Payment failed:", err);
         alert("Payment failed. Please try again.");
+        tipBtn.disabled = false;
         return false;
     }
 }
