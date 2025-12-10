@@ -192,9 +192,6 @@ async function payInvoice(paymentRequest) {
 }
 
 async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
-    const modalId = 'payment-qr-modal';
-    showModal(modalId);
-
     try {
         const resp = await fetch('/api/create-invoice', {
             method: 'POST',
@@ -208,8 +205,15 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         const invoice = data.paymentRequest;
         const invoiceId = data.id;
 
+        showModal('payment-qr-modal');
+
         const canvas = document.getElementById('qr-code');
+        if (!canvas) throw new Error('QR canvas not found');
+
+        canvas.width = 200;
+        canvas.height = 200;
         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+
         await QRCode.toCanvas(canvas, invoice, { width: 200 });
 
         const invoiceText = document.getElementById('invoice-text');
@@ -233,16 +237,19 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
                 paid = true;
                 statusEl.textContent = 'Payment received!';
                 await new Promise(r => setTimeout(r, 1500));
-                closeModal(modalId);
+                closeModal('payment-qr-modal');
                 return true;
             }
         }
+
     } catch (err) {
         console.error('QR payment failed:', err);
-        document.getElementById('qr-status').textContent = 'Payment failed. Please try again.';
+        alert('Payment failed. Please try again.');
+        closeModal('payment-qr-modal');
         return false;
     }
 }
+
 
 async function handlePayment() {
     const tipBtn = document.getElementById('tip-btn');
