@@ -227,18 +227,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         const statusEl = document.getElementById('qr-status');
         statusEl.textContent = 'Waiting for payment...';
 
-        let paid = false;
-        const start = Date.now();
-        while (!paid && Date.now() - start < 5 * 60 * 1000) {
-            await new Promise(r => setTimeout(r, 1000));
-            const statusResp = await fetch(`/api/check-invoice?id=${invoiceId}`);
-            const statusData = await statusResp.json();
-            if (statusData.paid) {
-                paid = true;
-                statusEl.textContent = 'Payment received!';
-            }
-        }
-
+        const paid = await waitForPayment(invoiceId, statusEl);
         if (!paid) {
             alert("Payment not received. Please try again.");
             closeModal('payment-qr-modal');
@@ -255,6 +244,32 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
     }
 }
 
+function waitForPayment(invoiceId, statusEl, timeout = 5*60*1000) {
+    return new Promise((resolve) => {
+        const start = Date.now();
+        const interval = setInterval(async () => {
+            if (Date.now() - start > timeout) {
+                clearInterval(interval);
+                resolve(false);
+                return;
+            }
+
+            try {
+                const resp = await fetch(`/api/check-invoice?id=${invoiceId}`);
+                if (!resp.ok) throw new Error('Invoice check failed');
+
+                const data = await resp.json();
+                if (data.paid) {
+                    clearInterval(interval);
+                    statusEl.textContent = 'Payment received!';
+                    resolve(true);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }, 1000);
+    });
+}
 
 async function handlePayment() {
     const tipBtn = document.getElementById('tip-btn');
