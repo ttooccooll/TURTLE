@@ -1,9 +1,8 @@
 import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
-  const { id } = req.query;
-
-  if (!id) return res.status(400).json({ error: 'Missing invoice ID' });
+  const { paymentRequest } = req.query;
+  if (!paymentRequest) return res.status(400).json({ error: 'Missing paymentRequest' });
 
   try {
     const query = `
@@ -15,9 +14,7 @@ export default async function handler(req, res) {
       }
     `;
 
-    const variables = {
-      input: { paymentRequest: id }
-    };
+    const variables = { input: { paymentRequest } };
 
     const resp = await fetch(process.env.BLINK_SERVER, {
       method: 'POST',
@@ -29,7 +26,8 @@ export default async function handler(req, res) {
     });
 
     const data = await resp.json();
-    console.log('Invoice check response:', data); 
+    console.log('Invoice check response:', data);
+
     if (data.errors) {
       return res.status(500).json({ error: 'Blink GraphQL errors', details: data.errors });
     }
@@ -39,7 +37,6 @@ export default async function handler(req, res) {
 
     const paid = invoice.status === 'SETTLED';
     res.status(200).json({ paid, paymentRequest: invoice.paymentRequest });
-
   } catch (err) {
     console.error('Server exception:', err);
     res.status(500).json({ error: 'Server error', details: err.message });
