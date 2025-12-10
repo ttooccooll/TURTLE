@@ -194,23 +194,62 @@ async function payInvoice(paymentRequest) {
   }
 }
 
-async function handlePayment() {
-  try {
-    const invoice = await generateInvoiceForBlink(100);
-    await payInvoice(invoice);
-    alert("Payment of 100 sats successful!");
+async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
+    try {
+        const resp = await fetch('/api/create-invoice', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amountSats, memo })
+        });
+        const data = await resp.json();
+        if (!data.paymentRequest || !data.id) throw new Error('Invoice generation failed');
 
-    const tipBtn = document.getElementById('tip-btn');
-    tipBtn.style.display = 'inline-block';
-    tipBtn.disabled = false;
+        const invoice = data.paymentRequest;
+        const invoiceId = data.id;
 
-    return true;
-  } catch (err) {
-    console.error("Payment failed:", err);
-    alert("Payment failed. Please try again.");
-    return false;
-  }
+        const canvas = document.getElementById('qr-code');
+        QRCode.toCanvas(canvas, invoice, { width: 200 });
+        showModal('payment-qr-modal');
+        document.getElementById('qr-status').textContent = 'Waiting for payment...';
+
+        let paid = false;
+        while (!paid) {
+            await new Promise(r => setTimeout(r, 3000));
+            const statusResp = await fetch(`/api/check-invoice?id=${invoiceId}`);
+            const statusData = await statusResp.json();
+            paid = statusData.paid;
+
+            if (paid) {
+                document.getElementById('qr-status').textContent = 'Payment received!';
+                await new Promise(r => setTimeout(r, 1500));
+                closeModal('payment-qr-modal');
+                return true;
+            }
+        }
+
+    } catch (err) {
+        console.error('QR payment failed:', err);
+        alert('Payment failed or cancelled. Please try again.');
+        return false;
+    }
 }
+
+async function handlePayment() {
+    try {
+        if (typeof WebLN !== 'undefined') {
+            const invoice = await generateInvoiceForBlink(100);
+            await payInvoice(invoice);
+            alert("Payment of 100 sats successful!");
+            return true;
+        } else {
+            return await payWithQR(100);
+        }
+    } catch (err) {
+        console.warn('WebLN failed, falling back to QR', err);
+        return await payWithQR(100);
+    }
+}
+
 
 function createGameBoard() {
     gameBoard.innerHTML = '';
