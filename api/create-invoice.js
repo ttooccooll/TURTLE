@@ -35,6 +35,7 @@ export default async function handler(req, res) {
       }
     };
 
+
     const resp = await fetch(BLINK_SERVER, {
       method: 'POST',
       headers: { 
@@ -44,25 +45,35 @@ export default async function handler(req, res) {
       body: JSON.stringify({ query, variables })
     });
 
-    const data = await resp.json();
+    let data;
+    const contentType = resp.headers.get('content-type');
 
-    if (data.errors || data.data.lnInvoiceCreate.errors.length) {
-      return res.status(500).json({
-        error: "Failed to create invoice",
-        details: data.errors || data.data.lnInvoiceCreate.errors
+    if (contentType && contentType.includes('application/json')) {
+      data = await resp.json();
+    } else {
+      const text = await resp.text();
+      console.error('Non-JSON server response:', text);
+      return res.status(500).json({ error: 'Server returned non-JSON response', details: text });
+    }
+
+    if (data.errors || (data.data.lnInvoiceCreate.errors.length)) {
+      console.error('GraphQL errors:', data.errors || data.data.lnInvoiceCreate.errors);
+      return res.status(500).json({ 
+        error: 'Failed to create invoice', 
+        details: data.errors || data.data.lnInvoiceCreate.errors 
       });
     }
 
-    const blinkInvoiceId = data.data.lnInvoiceCreate.invoice.id;
+    const invoiceId = crypto.randomUUID?.() || Math.random().toString(36).slice(2);
+    invoiceMap[invoiceId] = data.data.lnInvoiceCreate.invoice.paymentRequest;
 
-    invoiceMap[blinkInvoiceId] = data.data.lnInvoiceCreate.invoice.paymentRequest;
-
-    return res.status(200).json({
+    return res.status(200).json({ 
       paymentRequest: data.data.lnInvoiceCreate.invoice.paymentRequest,
-      id: blinkInvoiceId
+      id: invoiceId
     });
 
   } catch (err) {
+    console.error('Server exception:', err);
     return res.status(500).json({ error: 'Server error', details: err.message });
   }
 }

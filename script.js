@@ -165,22 +165,18 @@ async function generateInvoiceForBlink(amountSats) {
       throw new Error('Failed to generate invoice: server returned non-JSON response');
     }
 
-    if (!resp.ok || !data.paymentRequest || !data.id) {
+    if (!resp.ok || !data.paymentRequest) {
       console.error("Blink API error:", data);
       throw new Error("Failed to generate invoice");
     }
 
-    return {
-      id: data.id,
-      paymentRequest: data.paymentRequest
-    };
+    return data.paymentRequest;
 
   } catch (err) {
     console.error("Invoice generation error:", err);
     throw err;
   }
 }
-
 
 async function payInvoice(paymentRequest) {
   if (typeof WebLN === 'undefined') throw new Error("WebLN not available");
@@ -208,7 +204,6 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
 
         const invoice = data.paymentRequest;
         const invoiceId = data.id;
-
 
         showModal('payment-qr-modal');
 
@@ -287,25 +282,14 @@ async function handlePayment() {
         if (typeof WebLN !== 'undefined') {
             try {
                 const invoice = await generateInvoiceForBlink(100);
-
-                await payInvoice(invoice.paymentRequest);
-
-
-                const verify = await fetch(`/api/check-invoice?id=${invoice.id}`);
-                const result = await verify.json();
-
-                if (result.paid) {
-                    alert("Payment of 100 sats successful!");
-                    tipBtn.disabled = false;
-                    return true;
-                }
-
-                console.warn("WebLN reported success but invoice not settled. Falling back to QR.");
+                await payInvoice(invoice);
+                alert("Payment of 100 sats successful!");
+                tipBtn.disabled = false;
+                return true;
             } catch (weblnErr) {
                 console.warn("WebLN failed, falling back to QR:", weblnErr);
             }
         }
-
 
         const qrSuccess = await payWithQR(100, "Turtle Game Payment");
         tipBtn.disabled = false;
@@ -625,38 +609,16 @@ document.getElementById('tip-btn').addEventListener('click', async () => {
     tipBtn.disabled = true;
 
     try {
-        const invoice = await generateInvoiceForBlink(10000);
-
-        if (typeof WebLN !== 'undefined') {
-            try {
-                await payInvoice(invoice.paymentRequest);
-
-                const verify = await fetch(`/api/check-invoice?id=${invoice.id}`);
-                const result = await verify.json();
-
-                if (result.paid) {
-                    alert("Tip of 10,000 sats successful!");
-                    tipBtn.disabled = false;
-                    return;
-                }
-
-                console.warn("WebLN did not settle invoice. Falling back to QR.");
-            } catch (err) {
-                console.warn("WebLN tip failed, falling back to QR.", err);
-            }
-        }
-
-        const qrSuccess = await payWithQR(10000, "Turtle Game Tip");
-        if (qrSuccess) alert("Tip of 10,000 sats successful!");
+        const invoiceTip = await generateInvoiceForBlink(10000);
+        await payInvoice(invoiceTip);
+        alert("Tip of 10,000 sats successful!");
 
     } catch (err) {
         console.error("Tip payment failed:", err);
         alert("Tip failed. Please try again.");
+        tipBtn.disabled = false;
     }
-
-    tipBtn.disabled = false;
 });
-
 
 
 window.resetGame = startNewGame;
