@@ -405,8 +405,15 @@
                 min-width: 50px;
                 font-size: 10px;
             }
-            #help-modal {
-                overflow: scroll;
-                transform: scale(.5);
+            #help-modal.p {
+                font-size: x-small;
+            }
+            #help-modal.h2 {
+                font-size: small;
+            }
+            .tile {
+                width: 20px;
+                height: 20px;
+                font-size: 10px;
             }
         }
