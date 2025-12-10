@@ -561,6 +561,11 @@ document.addEventListener('keydown', (e) => {
 
     const openModal = document.querySelector('.modal.show');
     if (openModal) {
+        if (openModal.id === 'payment-qr-modal') {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
         e.preventDefault();
         e.stopPropagation();
         if (openModal.id === 'game-over-modal') {
