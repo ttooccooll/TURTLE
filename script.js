@@ -228,6 +228,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         statusEl.textContent = 'Waiting for payment...';
 
         let paid = false;
+        const timeout = Date.now() + 5 * 60 * 1000;
         while (!paid) {
             await new Promise(r => setTimeout(r, 1000));
             const statusResp = await fetch(`/api/check-invoice?id=${invoiceId}`);
