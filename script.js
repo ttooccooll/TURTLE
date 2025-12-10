@@ -209,18 +209,26 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
 
         const canvas = document.getElementById('qr-code');
         QRCode.toCanvas(canvas, invoice, { width: 200 });
-        showModal('payment-qr-modal');
-        document.getElementById('qr-status').textContent = 'Waiting for payment...';
 
-        let paid = false;
-        while (!paid) {
+        const invoiceText = document.getElementById('invoice-text');
+        invoiceText.value = invoice;
+
+        showModal('payment-qr-modal');
+        const statusEl = document.getElementById('qr-status');
+        statusEl.textContent = 'Waiting for payment...';
+
+        document.getElementById('copy-invoice-btn').onclick = () => {
+            invoiceText.select();
+            document.execCommand('copy');
+            alert('Invoice copied to clipboard!');
+        };
+
+        while (true) {
             await new Promise(r => setTimeout(r, 3000));
             const statusResp = await fetch(`/api/check-invoice?id=${invoiceId}`);
             const statusData = await statusResp.json();
-            paid = statusData.paid;
-
-            if (paid) {
-                document.getElementById('qr-status').textContent = 'Payment received!';
+            if (statusData.paid) {
+                statusEl.textContent = 'Payment received!';
                 await new Promise(r => setTimeout(r, 1500));
                 closeModal('payment-qr-modal');
                 return true;
@@ -229,7 +237,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
 
     } catch (err) {
         console.error('QR payment failed:', err);
-        alert('Payment failed or cancelled. Please try again.');
+        alert('Payment failed. Please try again.');
         return false;
     }
 }
