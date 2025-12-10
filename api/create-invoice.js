@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     const query = `
       mutation LnInvoiceCreate($input: LnInvoiceCreateInput!) {
         lnInvoiceCreate(input: $input) {
-          invoice { id paymentRequest }
+          invoice { paymentRequest }
           errors { message }
         }
       }
@@ -30,11 +30,8 @@ export default async function handler(req, res) {
         amount: parseInt(amount),
         walletId: BLINK_WALLET_ID,
         memo: memo || "Turtle Game Payment",
-        externalId: crypto.randomUUID?.() || Math.random().toString(36).slice(2),
-        expiresIn: 10
       }
     };
-
 
     const resp = await fetch(BLINK_SERVER, {
       method: 'POST',
