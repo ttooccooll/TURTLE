@@ -208,11 +208,10 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         showModal('payment-qr-modal');
 
         const canvas = document.getElementById('qr-code');
-        if (!canvas) throw new Error('QR canvas not found');
-
+        const ctx = canvas.getContext('2d');
         canvas.width = 200;
         canvas.height = 200;
-        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         await QRCode.toCanvas(canvas, invoice, { width: 200 });
 
@@ -236,11 +235,12 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
             if (statusData.paid) {
                 paid = true;
                 statusEl.textContent = 'Payment received!';
-                await new Promise(r => setTimeout(r, 1500));
-                closeModal('payment-qr-modal');
-                return true;
             }
         }
+
+        await new Promise(r => setTimeout(r, 1500));
+        closeModal('payment-qr-modal');
+        return true;
 
     } catch (err) {
         console.error('QR payment failed:', err);
@@ -270,10 +270,8 @@ async function handlePayment() {
         }
 
         const qrSuccess = await payWithQR(100, "Turtle Game Payment");
-        if (!qrSuccess) throw new Error("QR payment failed");
-
         tipBtn.disabled = false;
-        return true;
+        return qrSuccess;
 
     } catch (err) {
         console.error("Payment failed:", err);
@@ -282,7 +280,6 @@ async function handlePayment() {
         return false;
     }
 }
-
 
 
 function createGameBoard() {
