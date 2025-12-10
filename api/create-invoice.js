@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') 
     return res.status(405).json({ error: 'Method not allowed' });
 
-  const { amount, memo } = req.body;
+  const { amount, memo, useWallet } = req.body;
   if (!amount || isNaN(amount)) 
     return res.status(400).json({ error: 'Amount must be a number' });
 
@@ -28,11 +28,11 @@ export default async function handler(req, res) {
     const variables = {
       input: {
         amount: parseInt(amount),
-        walletId: BLINK_WALLET_ID,
         memo: memo || "Turtle Game Payment",
-        externalId: generateUUID() 
+        ...(useWallet ? { walletId: BLINK_WALLET_ID, externalId: generateUUID() } : {})
       }
     };
+
 
     const resp = await fetch(BLINK_SERVER, {
       method: 'POST',
