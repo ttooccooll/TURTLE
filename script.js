@@ -208,20 +208,17 @@ async function handlePayment(amountSats = 100) {
         const invoiceId = data.id;
 
         if (typeof WebLN !== 'undefined') {
-            const webln = await WebLN.requestProvider();
-            await webln.enable();
-            await webln.sendPayment(invoice);
-            alert(`Payment of ${amountSats} sats successful!`);
+            try {
+                const webln = await WebLN.requestProvider();
+                await webln.enable();
+                await webln.sendPayment(invoice);
+                alert(`Payment of ${amountSats} sats successful!`);
+            } catch (err) {
+                console.warn("WebLN payment failed, falling back to QR code:", err);
+                await showQrModal(invoice, invoiceId, amountSats);
+            }
         } else {
-            await QRCode.toCanvas(document.getElementById('qr-code'), invoice);
-            showModal('payment-qr-modal');
-
-            showMessage(`Scan the QR code to pay ${amountSats} sats`);
-
-            await waitForInvoicePaid(invoiceId);
-
-            closeModal('payment-qr-modal');
-            alert('Payment received! You can start playing now.');
+            await showQrModal(invoice, invoiceId, amountSats);
         }
 
         const tipBtn = document.getElementById('tip-btn');
@@ -237,23 +234,52 @@ async function handlePayment(amountSats = 100) {
     }
 }
 
-async function waitForInvoicePaid(invoiceId, interval = 2000) {
+async function showQrModal(invoice, invoiceId, amountSats) {
+    if (!window.QRCode) throw new Error('QRCode library not loaded');
+
+    await window.QRCode.toCanvas(document.getElementById('qr-code'), invoice);
+
+    showModal('payment-qr-modal');
+    document.getElementById('qr-instruction').textContent =
+        `Scan this QR code with your Lightning wallet to pay ${amountSats} sats`;
+
+    try {
+        await waitForInvoicePaid(invoiceId);
+        closeModal('payment-qr-modal');
+        alert('Payment received! You can start playing now.');
+    } catch (err) {
+        console.warn('QR payment not confirmed:', err);
+        alert('Payment not received. Please try again.');
+    }
+}
+
+async function waitForInvoicePaid(invoiceId, interval = 2000, timeout = 120000) {
+    const startTime = Date.now();
+
     return new Promise((resolve, reject) => {
-        const timer = setInterval(async () => {
+        const poll = async () => {
             try {
                 const resp = await fetch(`/api/check-invoice?id=${invoiceId}`);
                 if (!resp.ok) throw new Error('Failed to check invoice');
-
                 const data = await resp.json();
+
                 if (data.paid) {
-                    clearInterval(timer);
                     resolve(true);
+                    return;
                 }
+
+                if (Date.now() - startTime > timeout) {
+                    reject(new Error('Payment timeout'));
+                    return;
+                }
+
+                setTimeout(poll, interval);
             } catch (err) {
-                clearInterval(timer);
                 reject(err);
             }
-        }, interval);
+        };
+
+        poll();
     });
 }
 
