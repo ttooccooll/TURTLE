@@ -193,7 +193,7 @@ async function payInvoice(paymentRequest) {
 
 async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
     try {
-        const resp = await fetch('/api/create-invoice', {
+        const resp = await fetch('/pages/api/create-invoice', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ amount: amountSats, memo })
@@ -231,7 +231,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         const start = Date.now();
         while (!paid && Date.now() - start < 5 * 60 * 1000) {
             await new Promise(r => setTimeout(r, 1000));
-            const statusResp = await fetch(`/api/check-invoice?id=${invoiceId}`);
+            const statusResp = await fetch(`/pages/api/check-invoice?id=${invoiceId}`);
             const statusData = await statusResp.json();
             if (statusData.paid) {
                 paid = true;
