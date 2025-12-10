@@ -85,6 +85,18 @@ async function loadWordList(language = 'english') {
         .map(w => w.toUpperCase());
 }
 
+function canPlayFreeGameToday() {
+    const today = new Date().toISOString().split('T')[0];
+    const lastPlayDate = localStorage.getItem('turtleLastPlayDate');
+
+    return lastPlayDate !== today;
+}
+
+function markFreeGamePlayed() {
+    const today = new Date().toISOString().split('T')[0];
+    localStorage.setItem('turtleLastPlayDate', today);
+}
+
 async function startNewGame() {
     inputLocked = false;
     isFocusSet = false;
@@ -109,7 +121,15 @@ async function startNewGame() {
         played: 0, won: 0, currentStreak: 0, maxStreak: 0, guessDistribution: [0,0,0,0,0,0]
     };
 
-    if (stats.played >= 3) {
+    let paymentRequired = false;
+
+    if (!canPlayFreeGameToday()) {
+        paymentRequired = true;
+    } else {
+        markFreeGamePlayed();
+    }
+
+    if (paymentRequired) {
         showMessage("Payment required to continue playing...");
 
         const paymentSuccess = await handlePayment();
@@ -127,6 +147,7 @@ async function startNewGame() {
     inputLocked = false;
     showMessage("Game started! Good luck!");
 }
+
 
 async function generateInvoiceForBlink(amountSats) {
   try {
