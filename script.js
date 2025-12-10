@@ -228,13 +228,15 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         statusEl.textContent = 'Waiting for payment...';
 
         const paid = await waitForPayment(invoiceId, statusEl);
-        if (!paid) {
+        if (paid) {
+            showMessage("Payment received! Thank you!");
+            closeModal('payment-qr-modal');
+            return true;
+        } else {
             alert("Payment not received. Please try again.");
             closeModal('payment-qr-modal');
             return false;
         }
-        closeModal('payment-qr-modal');
-        return true;
 
     } catch (err) {
         console.error('QR payment failed:', err);
