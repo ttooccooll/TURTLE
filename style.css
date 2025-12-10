@@ -407,5 +407,6 @@
             }
             #help-modal {
                 overflow: scroll;
+                transform: scale(.5);
             }
         }
