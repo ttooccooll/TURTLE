@@ -406,8 +406,6 @@
                 font-size: 10px;
             }
             #help-modal {
-                transform: scale(.8);
                 overflow: scroll;
-                z-index: 2;
             }
         }
