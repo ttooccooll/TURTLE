@@ -208,17 +208,20 @@ async function handlePayment(amountSats = 100) {
         const invoiceId = data.id;
 
         if (typeof WebLN !== 'undefined') {
-            try {
-                const webln = await WebLN.requestProvider();
-                await webln.enable();
-                await webln.sendPayment(invoice);
-                alert(`Payment of ${amountSats} sats successful!`);
-            } catch (err) {
-                console.warn("WebLN payment failed, falling back to QR code:", err);
-                await showQrModal(invoice, invoiceId, amountSats);
-            }
+            const webln = await WebLN.requestProvider();
+            await webln.enable();
+            await webln.sendPayment(invoice);
+            alert(`Payment of ${amountSats} sats successful!`);
         } else {
-            await showQrModal(invoice, invoiceId, amountSats);
+            const qrCanvas = document.getElementById('qr-code');
+            QRCode.toCanvas(qrCanvas, invoice, { width: 200 });
+
+            showModal('payment-qr-modal');
+
+            await waitForInvoicePaid(invoiceId);
+
+            closeModal('payment-qr-modal');
+            alert('Payment received! You can start playing now.');
         }
 
         const tipBtn = document.getElementById('tip-btn');
@@ -253,33 +256,22 @@ async function showQrModal(invoice, invoiceId, amountSats) {
     }
 }
 
-async function waitForInvoicePaid(invoiceId, interval = 2000, timeout = 120000) {
-    const startTime = Date.now();
-
+async function waitForInvoicePaid(invoiceId, interval = 2000) {
     return new Promise((resolve, reject) => {
-        const poll = async () => {
+        const timer = setInterval(async () => {
             try {
                 const resp = await fetch(`/api/check-invoice?id=${invoiceId}`);
                 if (!resp.ok) throw new Error('Failed to check invoice');
                 const data = await resp.json();
-
                 if (data.paid) {
+                    clearInterval(timer);
                     resolve(true);
-                    return;
                 }
-
-                if (Date.now() - startTime > timeout) {
-                    reject(new Error('Payment timeout'));
-                    return;
-                }
-
-                setTimeout(poll, interval);
             } catch (err) {
+                clearInterval(timer);
                 reject(err);
             }
-        };
-
-        poll();
+        }, interval);
     });
 }
 

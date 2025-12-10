@@ -161,10 +161,10 @@
     </div>
 
     <div id="payment-qr-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('payment-qr-modal')">&times;</span>
-            <h2>Scan to Pay</h2>
-            <p id="qr-instruction">Use your Lightning wallet to scan the QR code:</p>
-            <canvas id="qr-code"></canvas>
-        </div>
+    <div class="modal-content">
+        <h2>Pay with Lightning</h2>
+        <p id="qr-instruction">Scan this QR code with your Lightning wallet to pay.</p>
+        <canvas id="qr-code"></canvas>
+        <p id="qr-status">Waiting for payment...</p>
+    </div>
     </div>
