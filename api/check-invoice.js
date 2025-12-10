@@ -28,7 +28,7 @@ export default async function handler(req, res) {
             })
         });
 
-        const text = await resp.text(); // log raw response first
+        const text = await resp.text();
         console.log("Blink raw response:", text);
 
         let data;
