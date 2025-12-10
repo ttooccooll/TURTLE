@@ -228,7 +228,8 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         statusEl.textContent = 'Waiting for payment...';
 
         let paid = false;
-        while (!paid) {
+        const start = Date.now();
+        while (!paid && Date.now() - start < 5 * 60 * 1000) {
             await new Promise(r => setTimeout(r, 1000));
             const statusResp = await fetch(`/api/check-invoice?id=${invoiceId}`);
             const statusData = await statusResp.json();
@@ -238,7 +239,11 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
             }
         }
 
-        await new Promise(r => setTimeout(r, 500));
+        if (!paid) {
+            alert("Payment not received. Please try again.");
+            closeModal('payment-qr-modal');
+            return false;
+        }
         closeModal('payment-qr-modal');
         return true;
 

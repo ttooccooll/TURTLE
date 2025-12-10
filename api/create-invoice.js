@@ -1,4 +1,7 @@
 import fetch from 'node-fetch';
+import crypto from 'crypto';
+
+const invoiceMap = {};
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') 
@@ -59,10 +62,11 @@ export default async function handler(req, res) {
     }
 
     const invoiceId = crypto.randomUUID?.() || Math.random().toString(36).slice(2);
+    invoiceMap[invoiceId] = data.data.lnInvoiceCreate.invoice.paymentRequest;
 
     return res.status(200).json({ 
       paymentRequest: data.data.lnInvoiceCreate.invoice.paymentRequest,
-      id: data.data.lnInvoiceCreate.invoice.id
+      id: invoiceId
     });
 
   } catch (err) {
