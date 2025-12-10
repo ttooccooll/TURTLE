@@ -25,12 +25,16 @@ export default async function handler(req, res) {
       }),
     });
 
-    if (!resp.ok) {
-      const text = await resp.text();
-      return res.status(500).json({ error: 'Blink server error', details: text });
+    const text = await resp.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (err) {
+      console.error('Failed to parse Blink response:', text);
+      return res.status(500).json({ error: 'Invalid JSON from Blink', details: text });
     }
 
-    const data = await resp.json();
+    console.log('Blink response:', JSON.stringify(data, null, 2));
 
     if (data.errors) {
       return res.status(500).json({ error: 'Blink GraphQL errors', details: data.errors });
@@ -43,6 +47,7 @@ export default async function handler(req, res) {
     const paid = invoice.status === 'SETTLED';
 
     res.status(200).json({ paid, paymentRequest: invoice.paymentRequest });
+
   } catch (err) {
     console.error('Server exception:', err);
     res.status(500).json({ error: 'Server error', details: err.message });
