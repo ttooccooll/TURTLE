@@ -242,19 +242,28 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
     }
 }
 
+
 async function handlePayment() {
     try {
         if (typeof WebLN !== 'undefined') {
             const invoice = await generateInvoiceForBlink(100);
             await payInvoice(invoice);
             alert("Payment of 100 sats successful!");
-            return true;
         } else {
-            return await payWithQR(100);
+            const paid = await payWithQR(100, "Turtle Game Payment");
+            if (!paid) throw new Error("QR payment failed");
         }
+
+        const tipBtn = document.getElementById('tip-btn');
+        tipBtn.style.display = 'inline-block';
+        tipBtn.disabled = false;
+
+        return true;
+
     } catch (err) {
-        console.warn('WebLN failed, falling back to QR', err);
-        return await payWithQR(100);
+        console.error("Payment failed:", err);
+        alert("Payment failed. Please try again.");
+        return false;
     }
 }
 
