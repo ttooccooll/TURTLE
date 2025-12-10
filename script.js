@@ -201,20 +201,24 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ amount: amountSats, memo })
         });
+
         const data = await resp.json();
         if (!data.paymentRequest || !data.id) throw new Error('Invoice generation failed');
 
         const invoice = data.paymentRequest;
         const invoiceId = data.id;
+
         showModal('payment-qr-modal');
+
         const canvas = document.getElementById('qr-code');
-        QRCode.toCanvas(canvas, invoice, { width: 200 });
+        if (!canvas) throw new Error('QR canvas not found');
+
+        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+
+        await QRCode.toCanvas(canvas, invoice, { width: 200 });
 
         const invoiceText = document.getElementById('invoice-text');
         invoiceText.value = invoice;
-
-        const statusEl = document.getElementById('qr-status');
-        statusEl.textContent = 'Waiting for payment...';
 
         document.getElementById('copy-invoice-btn').onclick = () => {
             invoiceText.select();
@@ -222,11 +226,16 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
             alert('Invoice copied to clipboard!');
         };
 
-        while (true) {
+        const statusEl = document.getElementById('qr-status');
+        statusEl.textContent = 'Waiting for payment...';
+
+        let paid = false;
+        while (!paid) {
             await new Promise(r => setTimeout(r, 3000));
             const statusResp = await fetch(`/api/check-invoice?id=${invoiceId}`);
             const statusData = await statusResp.json();
             if (statusData.paid) {
+                paid = true;
                 statusEl.textContent = 'Payment received!';
                 await new Promise(r => setTimeout(r, 1500));
                 closeModal('payment-qr-modal');
@@ -237,9 +246,11 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
     } catch (err) {
         console.error('QR payment failed:', err);
         alert('Payment failed. Please try again.');
+        closeModal('payment-qr-modal');
         return false;
     }
 }
+
 
 
 async function handlePayment() {
