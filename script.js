@@ -148,7 +148,7 @@ async function startNewGame() {
 
 async function generateInvoiceForBlink(amountSats) {
   try {
-    const resp = await fetch('/api/create-invoice', {
+    const resp = await fetch('/pages/api/create-invoice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
