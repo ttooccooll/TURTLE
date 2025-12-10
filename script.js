@@ -111,41 +111,38 @@ async function startNewGame() {
     letterStates = {};
 
     document.getElementById('tip-btn').style.display = 'inline-block';
+    document.getElementById('tip-btn').disabled = false;
 
     createGameBoard();
     resetKeyboard();
 
     targetWord = WORDS[Math.floor(Math.random() * WORDS.length)];
 
-    const stats = JSON.parse(localStorage.getItem('turtleStats')) || {
-        played: 0, won: 0, currentStreak: 0, maxStreak: 0, guessDistribution: [0,0,0,0,0,0]
-    };
+    let paymentRequired = !canPlayFreeGameToday();
 
-    let paymentRequired = false;
-
-    if (!canPlayFreeGameToday()) {
-        paymentRequired = true;
-    } else {
+    if (!paymentRequired) {
         markFreeGamePlayed();
     }
 
     if (paymentRequired) {
         showMessage("Payment required to continue playing...");
 
+        inputLocked = true;
         const paymentSuccess = await handlePayment();
         if (!paymentSuccess) {
             showMessage("Payment not completed. Game cannot start.");
-            inputLocked = true;
             return;
         }
+
+        inputLocked = false;
+        showMessage("Payment received! Game started!");
+    } else {
+        showMessage("Game started! Good luck!");
     }
 
     closeModal('game-over-modal');
     closeModal('help-modal');
     closeModal('stats-modal');
-
-    inputLocked = false;
-    showMessage("Game started! Good luck!");
 }
 
 
@@ -242,11 +239,10 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         }
     } catch (err) {
         console.error('QR payment failed:', err);
-        statusEl.textContent = 'Payment failed. Please try again.';
+        document.getElementById('qr-status').textContent = 'Payment failed. Please try again.';
         return false;
     }
 }
-
 
 async function handlePayment() {
     const tipBtn = document.getElementById('tip-btn');
@@ -262,7 +258,7 @@ async function handlePayment() {
                 tipBtn.disabled = false;
                 return true;
             } catch (weblnErr) {
-                console.warn("WebLN payment failed, falling back to QR:", weblnErr);
+                console.warn("WebLN failed, falling back to QR:", weblnErr);
             }
         }
 
@@ -279,6 +275,7 @@ async function handlePayment() {
         return false;
     }
 }
+
 
 
 function createGameBoard() {
