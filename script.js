@@ -206,14 +206,13 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
 
         const invoice = data.paymentRequest;
         const invoiceId = data.id;
-
+        showModal('payment-qr-modal');
         const canvas = document.getElementById('qr-code');
         QRCode.toCanvas(canvas, invoice, { width: 200 });
 
         const invoiceText = document.getElementById('invoice-text');
         invoiceText.value = invoice;
 
-        showModal('payment-qr-modal');
         const statusEl = document.getElementById('qr-status');
         statusEl.textContent = 'Waiting for payment...';
 
