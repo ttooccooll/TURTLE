@@ -58,8 +58,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const invoiceId = data.data.lnInvoiceCreate.invoice.id;
-
+    const invoiceId = crypto.randomUUID?.() || Math.random().toString(36).slice(2);
 
     return res.status(200).json({ 
       paymentRequest: data.data.lnInvoiceCreate.invoice.paymentRequest,
