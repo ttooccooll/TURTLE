@@ -62,7 +62,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ 
       paymentRequest: data.data.lnInvoiceCreate.invoice.paymentRequest,
-      id: invoiceId
+      id: data.data.lnInvoiceCreate.invoice.id
     });
 
   } catch (err) {
