@@ -282,6 +282,7 @@ async function handlePayment() {
         if (typeof WebLN !== 'undefined') {
             try {
                 const invoice = await generateInvoiceForBlink(100);
+                const paid = await waitForPayment(invoice, statusEl);
                 await payInvoice(invoice);
                 alert("Payment of 100 sats successful!");
                 tipBtn.disabled = false;
