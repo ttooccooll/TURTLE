@@ -200,6 +200,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         });
 
         const data = await resp.json();
+        console.log("API response:", data);
         if (!data.paymentRequest || !data.id) throw new Error('Invoice generation failed');
 
         const invoice = data.paymentRequest;
