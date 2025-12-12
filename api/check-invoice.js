@@ -2,15 +2,15 @@ import fetch from 'node-fetch';
 import crypto from 'crypto';
 
 export default async function handler(req, res) {
-  const { id: paymentRequest } = req.query;
-
-  if (!paymentRequest) {
-    return res.status(400).json({ error: 'Missing paymentRequest ID' });
+  const invoiceId = req.query.id;
+  if (!invoiceId) {
+    return res.status(400).json({ error: 'Missing invoice ID' });
   }
 
   try {
+    // GraphQL query: fetch recent transactions and find the invoice by externalId
     const query = `
-      query Payments($first: Int!) {
+      query PaymentsWithProof($first: Int!) {
         me {
           defaultAccount {
             transactions(first: $first) {
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
                 node {
                   initiationVia {
                     ... on InitiationViaLn {
-                      paymentRequest
+                      externalId
                       paymentHash
                     }
                   }
@@ -35,18 +35,18 @@ export default async function handler(req, res) {
       }
     `;
 
-    const variables = { first: 50 }; // adjust if you need more history
+    const variables = { first: 50 }; // fetch last 50 transactions
 
-    const resp = await fetch(process.env.BLINK_SERVER, {
+    const response = await fetch(process.env.BLINK_SERVER, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-KEY': process.env.BLINK_API_KEY,
+        'X-API-KEY': process.env.BLINK_READ_API_KEY // new read API key
       },
-      body: JSON.stringify({ query, variables }),
+      body: JSON.stringify({ query, variables })
     });
 
-    const data = await resp.json();
+    const data = await response.json();
 
     if (data.errors) {
       console.error('Blink GraphQL errors:', data.errors);
@@ -55,9 +55,9 @@ export default async function handler(req, res) {
 
     const transactions = data.data.me.defaultAccount.transactions.edges;
 
-    // Find the transaction that matches our paymentRequest
+    // Find the transaction that matches the externalId
     const tx = transactions.find(
-      t => t.node.initiationVia?.paymentRequest === paymentRequest
+      t => t.node.initiationVia?.externalId === invoiceId
     );
 
     if (!tx) {
@@ -67,16 +67,16 @@ export default async function handler(req, res) {
     const { paymentHash } = tx.node.initiationVia;
     const preImage = tx.node.settlementVia?.preImage;
 
-    // If preImage exists, the invoice is paid
+    // If preImage exists, payment is settled
     if (!preImage) {
-      return res.status(200).json({ paid: false, paymentRequest });
+      return res.status(200).json({ paid: false, paymentRequest: invoiceId });
     }
 
-    // Verify paymentHash matches the settled preImage
+    // Verify payment hash
     const hash = crypto.createHash('sha256').update(Buffer.from(preImage, 'hex')).digest('hex');
     const paid = hash === paymentHash;
 
-    return res.status(200).json({ paid, paymentRequest });
+    return res.status(200).json({ paid, paymentRequest: invoiceId });
 
   } catch (err) {
     console.error('Server exception:', err);

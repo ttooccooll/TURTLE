@@ -2,84 +2,64 @@ import fetch from 'node-fetch';
 import crypto from 'crypto';
 
 export default async function handler(req, res) {
-  const invoiceId = req.query.id;
-  if (!invoiceId) {
-    return res.status(400).json({ error: 'Missing invoice ID' });
-  }
+  if (req.method !== 'POST')
+    return res.status(405).json({ error: 'Method not allowed' });
+
+  const { amount, memo } = req.body;
+  if (!amount || isNaN(amount))
+    return res.status(400).json({ error: 'Amount must be a number' });
 
   try {
-    // GraphQL query: fetch recent transactions and find the invoice by externalId
+    const invoiceId = crypto.randomUUID?.() || Math.random().toString(36).slice(2);
+
     const query = `
-      query PaymentsWithProof($first: Int!) {
-        me {
-          defaultAccount {
-            transactions(first: $first) {
-              edges {
-                node {
-                  initiationVia {
-                    ... on InitiationViaLn {
-                      externalId
-                      paymentHash
-                    }
-                  }
-                  settlementVia {
-                    ... on SettlementViaLn {
-                      preImage
-                    }
-                  }
-                }
-              }
-            }
+      mutation LnInvoiceCreate($input: LnInvoiceCreateInput!) {
+        lnInvoiceCreate(input: $input) {
+          invoice {
+            paymentRequest
+            externalId
           }
+          errors { message }
         }
       }
     `;
 
-    const variables = { first: 50 }; // fetch last 50 transactions
+    const variables = {
+      input: {
+        amount: parseInt(amount),
+        walletId: process.env.BLINK_WALLET_ID,
+        memo: memo || "Turtle Game Payment",
+        externalId: invoiceId
+      }
+    };
 
-    const response = await fetch(process.env.BLINK_SERVER, {
+    const resp = await fetch(process.env.BLINK_SERVER, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-KEY': process.env.BLINK_READ_API_KEY // new read API key
+        'X-API-KEY': process.env.BLINK_API_KEY
       },
       body: JSON.stringify({ query, variables })
     });
 
-    const data = await response.json();
+    const data = await resp.json();
 
-    if (data.errors) {
-      console.error('Blink GraphQL errors:', data.errors);
-      return res.status(500).json({ error: 'Blink GraphQL error', details: data.errors });
+    if (data.errors || data.data.lnInvoiceCreate.errors.length) {
+      return res.status(500).json({
+        error: 'Failed to create invoice',
+        details: data.errors || data.data.lnInvoiceCreate.errors
+      });
     }
 
-    const transactions = data.data.me.defaultAccount.transactions.edges;
+    const invoice = data.data.lnInvoiceCreate.invoice;
 
-    // Find the transaction that matches the externalId
-    const tx = transactions.find(
-      t => t.node.initiationVia?.externalId === invoiceId
-    );
-
-    if (!tx) {
-      return res.status(404).json({ error: 'Invoice not found' });
-    }
-
-    const { paymentHash } = tx.node.initiationVia;
-    const preImage = tx.node.settlementVia?.preImage;
-
-    // If preImage exists, payment is settled
-    if (!preImage) {
-      return res.status(200).json({ paid: false, paymentRequest: invoiceId });
-    }
-
-    // Verify payment hash
-    const hash = crypto.createHash('sha256').update(Buffer.from(preImage, 'hex')).digest('hex');
-    const paid = hash === paymentHash;
-
-    return res.status(200).json({ paid, paymentRequest: invoiceId });
+    return res.status(200).json({
+      paymentRequest: invoice.paymentRequest,
+      externalId: invoice.externalId
+    });
 
   } catch (err) {
     console.error('Server exception:', err);
-    return res.status(500).json({ error: 'Server error', details: err.message });
+    res.status(500).json({ error: err.message });
   }
 }
