@@ -8,15 +8,17 @@ export default async function handler(req, res) {
 
   try {
     const query = `
-      query CheckInvoiceStatus($paymentHash: PaymentHash!) {
-        invoiceByPaymentHash(paymentHash: $paymentHash) {
-          paymentStatus
-          satoshis
+      query InvoiceStatusByHash($input: LnInvoicePaymentStatusByHashInput!) {
+        lnInvoicePaymentStatusByHash(input: $input) {
+          paymentHash
+          status
         }
       }
     `;
 
-    const variables = { paymentHash };
+    const variables = {
+      input: { paymentHash }
+    };
 
     const response = await fetch(process.env.BLINK_SERVER, {
       method: "POST",
@@ -29,28 +31,21 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const text = await response.text();
-      console.error("Blink API HTTP error:", response.status, text);
       return res.status(response.status).json({ error: "Blink API error", details: text });
     }
 
     const json = await response.json();
     if (json.errors) {
-      console.error("Blink GraphQL error:", json.errors);
-      return res.status(500).json({ error: "Blink GraphQL error", details: json.errors });
+      return res.status(500).json({ error: "GraphQL error", details: json.errors });
     }
 
-    const inv = json.data.invoiceByPaymentHash;
-    if (!inv) {
-      return res.status(404).json({ error: "Invoice not found" });
-    }
+    const status = json.data.lnInvoicePaymentStatusByHash.status;
 
     return res.status(200).json({
-      paid: inv.paymentStatus === "PAID",
-      satoshi: inv.satoshis
+      paid: status === "PAID",
+      status
     });
-
   } catch (err) {
-    console.error("Server error:", err);
     return res.status(500).json({ error: "Server error", details: err.toString() });
   }
 }
