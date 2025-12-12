@@ -51,7 +51,7 @@ export default async function handler(req, res) {
     const transactions = data.data.me.defaultAccount.transactions.edges;
 
     const tx = transactions.find(
-      (t) => t.node.initiationVia?.paymentRequest === paymentRequest
+      (t) => t.node.initiationVia?.externalId === paymentRequest
     );
 
     if (!tx) return res.status(404).json({ error: 'Invoice not found in transaction history' });

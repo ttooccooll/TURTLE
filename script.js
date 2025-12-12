@@ -203,7 +203,8 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         if (!data.paymentRequest || !data.paymentRequest) throw new Error('Invoice generation failed');
 
         const invoice = data.paymentRequest;
-        const invoiceId = data.paymentRequest;
+        const invoiceId = data.externalId;
+
 
         showModal('payment-qr-modal');
 

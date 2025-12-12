@@ -55,7 +55,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       paymentRequest: invoice.paymentRequest,
-      id: invoiceId
+      externalId: invoiceId
     });
 
   } catch (err) {
