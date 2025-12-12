@@ -331,8 +331,6 @@ async function handlePayment() {
             } catch (weblnErr) {
                 console.warn("WebLN failed, falling back to QR:", weblnErr);
             }
-        } else {
-            console.info("WebLN not available, using QR fallback");
         }
 
         const qrSuccess = await payWithQR(100, "Turtle Game Payment");
