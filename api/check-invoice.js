@@ -47,6 +47,8 @@ export default async function handler(req, res) {
     });
 
     const data = await resp.json();
+    console.log("Query response:", JSON.stringify(data, null, 2));
+
 
     if (data.errors) {
       console.error("Blink GraphQL errors:", data.errors);
