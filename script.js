@@ -235,7 +235,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
             closeModal('payment-qr-modal');
             return true;
         } else {
-            alert("Payment not received. Please try again.");
+            alert("Payment not received. ${err.message}");
             closeModal('payment-qr-modal');
             return false;
         }
