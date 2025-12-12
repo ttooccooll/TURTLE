@@ -1,20 +1,16 @@
 import fetch from 'node-fetch';
+import crypto from 'crypto';
 
 export default async function handler(req, res) {
+  const { id: paymentRequest } = req.query;
+
+  if (!paymentRequest) {
+    return res.status(400).json({ error: 'Missing paymentRequest ID' });
+  }
+
   try {
-    const invoiceId = req.query.id;
-    if (!invoiceId) {
-      return res.status(400).json({ error: "Missing invoice ID" });
-    }
-
-    // Validate environment variables
-    if (!process.env.BLINK_SERVER || !process.env.BLINK_API_KEY) {
-      console.error("Missing BLINK_SERVER or BLINK_API_KEY");
-      return res.status(500).json({ error: "Server configuration error" });
-    }
-
     const query = `
-      query PaymentsWithProof($first: Int!) {
+      query Payments($first: Int!) {
         me {
           defaultAccount {
             transactions(first: $first) {
@@ -24,7 +20,6 @@ export default async function handler(req, res) {
                     ... on InitiationViaLn {
                       paymentRequest
                       paymentHash
-                      externalId
                     }
                   }
                   settlementVia {
@@ -40,13 +35,13 @@ export default async function handler(req, res) {
       }
     `;
 
-    const variables = { first: 50 };
+    const variables = { first: 50 }; // adjust if you need more history
 
     const resp = await fetch(process.env.BLINK_SERVER, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": process.env.BLINK_API_KEY,
+        'Content-Type': 'application/json',
+        'X-API-KEY': process.env.BLINK_API_KEY,
       },
       body: JSON.stringify({ query, variables }),
     });
@@ -54,43 +49,37 @@ export default async function handler(req, res) {
     const data = await resp.json();
 
     if (data.errors) {
-      console.error("Blink GraphQL errors:", data.errors);
-      return res.status(500).json({ error: "Blink API error", details: data.errors });
+      console.error('Blink GraphQL errors:', data.errors);
+      return res.status(500).json({ error: 'Blink GraphQL error', details: data.errors });
     }
 
-    // Safe access to transactions
-    const edges = data.data?.me?.defaultAccount?.transactions?.edges || [];
-    if (!edges.length) {
-      console.warn("No transactions found");
-      return res.status(404).json({ error: "No transactions found" });
-    }
+    const transactions = data.data.me.defaultAccount.transactions.edges;
 
-    const tx = edges.find(
-      (t) => t.node.initiationVia?.externalId === invoiceId
+    // Find the transaction that matches our paymentRequest
+    const tx = transactions.find(
+      t => t.node.initiationVia?.paymentRequest === paymentRequest
     );
 
     if (!tx) {
-      console.warn("Invoice not found in transaction history:", invoiceId);
-      return res.status(404).json({ error: "Invoice not found" });
+      return res.status(404).json({ error: 'Invoice not found' });
     }
 
-    // Dynamic crypto import for Vercel
-    const crypto = await import("crypto");
-
-    const paymentHash = tx.node.initiationVia?.paymentHash;
+    const { paymentHash } = tx.node.initiationVia;
     const preImage = tx.node.settlementVia?.preImage;
 
+    // If preImage exists, the invoice is paid
     if (!preImage) {
-      return res.status(200).json({ paid: false, paymentRequest: tx.node.initiationVia.paymentRequest });
+      return res.status(200).json({ paid: false, paymentRequest });
     }
 
-    const hash = crypto.createHash("sha256").update(Buffer.from(preImage, "hex")).digest("hex");
+    // Verify paymentHash matches the settled preImage
+    const hash = crypto.createHash('sha256').update(Buffer.from(preImage, 'hex')).digest('hex');
     const paid = hash === paymentHash;
 
-    return res.status(200).json({ paid, paymentRequest: tx.node.initiationVia.paymentRequest });
+    return res.status(200).json({ paid, paymentRequest });
 
   } catch (err) {
-    console.error("Server exception:", err);
-    return res.status(500).json({ error: "Server error", details: err.message });
+    console.error('Server exception:', err);
+    return res.status(500).json({ error: 'Server error', details: err.message });
   }
 }
