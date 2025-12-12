@@ -242,7 +242,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
 
     } catch (err) {
         console.error('QR payment failed:', err);
-        alert('Payment failed. Please try again.');
+        alert('Payment failed. ${err.message}');
         closeModal('payment-qr-modal');
         return false;
     }
