@@ -1,16 +1,18 @@
 import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
-  const invoiceId = req.query.id;
-
-  if (!invoiceId) {
-    console.warn("Missing invoice ID in query");
-    return res.status(400).json({ error: "Missing invoice ID" });
-  }
-
-  console.log("Checking invoice ID:", invoiceId);
-
   try {
+    const invoiceId = req.query.id;
+    if (!invoiceId) {
+      return res.status(400).json({ error: "Missing invoice ID" });
+    }
+
+    // Validate environment variables
+    if (!process.env.BLINK_SERVER || !process.env.BLINK_API_KEY) {
+      console.error("Missing BLINK_SERVER or BLINK_API_KEY");
+      return res.status(500).json({ error: "Server configuration error" });
+    }
+
     const query = `
       query PaymentsWithProof($first: Int!) {
         me {
@@ -38,60 +40,57 @@ export default async function handler(req, res) {
       }
     `;
 
-    const variables = { first: 1000 }; // get the latest 1000 transactions
+    const variables = { first: 50 };
 
-    console.log("Sending request to Blink...");
     const resp = await fetch(process.env.BLINK_SERVER, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-API-KEY": process.env.BLINK_API_KEY
+        "X-API-KEY": process.env.BLINK_API_KEY,
       },
-      body: JSON.stringify({ query, variables })
+      body: JSON.stringify({ query, variables }),
     });
 
     const data = await resp.json();
-    console.log("Blink response:", JSON.stringify(data, null, 2));
 
     if (data.errors) {
-      console.error("GraphQL errors:", data.errors);
-      return res.status(500).json({ error: "Blink GraphQL errors", details: data.errors });
+      console.error("Blink GraphQL errors:", data.errors);
+      return res.status(500).json({ error: "Blink API error", details: data.errors });
     }
 
-    if (!data.data?.me?.defaultAccount?.transactions?.edges) {
-      console.error("Unexpected Blink response structure");
-      return res.status(500).json({ error: "Invalid Blink response structure", data });
+    // Safe access to transactions
+    const edges = data.data?.me?.defaultAccount?.transactions?.edges || [];
+    if (!edges.length) {
+      console.warn("No transactions found");
+      return res.status(404).json({ error: "No transactions found" });
     }
 
-    const transactions = data.data.me.defaultAccount.transactions.edges;
-
-    const tx = transactions.find(
+    const tx = edges.find(
       (t) => t.node.initiationVia?.externalId === invoiceId
     );
 
     if (!tx) {
-      console.warn("Invoice not found in latest transactions");
+      console.warn("Invoice not found in transaction history:", invoiceId);
       return res.status(404).json({ error: "Invoice not found" });
     }
 
-    const { paymentHash } = tx.node.initiationVia;
+    // Dynamic crypto import for Vercel
+    const crypto = await import("crypto");
+
+    const paymentHash = tx.node.initiationVia?.paymentHash;
     const preImage = tx.node.settlementVia?.preImage;
 
     if (!preImage) {
-      console.log("Invoice exists but not yet paid");
       return res.status(200).json({ paid: false, paymentRequest: tx.node.initiationVia.paymentRequest });
     }
 
-    const crypto = await import("crypto"); // dynamic import for Vercel edge compatibility
     const hash = crypto.createHash("sha256").update(Buffer.from(preImage, "hex")).digest("hex");
     const paid = hash === paymentHash;
-
-    console.log("Invoice check result:", paid);
 
     return res.status(200).json({ paid, paymentRequest: tx.node.initiationVia.paymentRequest });
 
   } catch (err) {
-    console.error("Server exception in check-invoice:", err.stack);
+    console.error("Server exception:", err);
     return res.status(500).json({ error: "Server error", details: err.message });
   }
 }
