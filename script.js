@@ -151,7 +151,7 @@ async function generateInvoiceForBlink(amountSats) {
     const resp = await fetch('/api/create-invoice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
+      cache: 'no-store',
       body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
     });
 
@@ -199,7 +199,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         const resp = await fetch('/api/create-invoice', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            credentials: 'same-origin',
+            cache: 'no-store',
             body: JSON.stringify({ amount: amountSats, memo })
         });
 
@@ -280,7 +280,6 @@ function waitForPayment(paymentHash, statusEl, timeout = 5 * 60 * 1000) {
 
             try {
                 const resp = await fetch(`/api/check-invoice?paymentHash=${paymentHash}`, {
-                    credentials: 'same-origin',
                     cache: 'no-store'
                 });
 
