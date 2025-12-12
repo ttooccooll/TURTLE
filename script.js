@@ -251,6 +251,14 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
 
 function waitForPayment(paymentHash, statusEl, timeout = 5*60*1000) {
     return new Promise((resolve) => {
+        if (!paymentHash) {
+            console.error("waitForPayment called without paymentHash!");
+            resolve(false);
+            return;
+        }
+
+        console.log("Waiting for payment for hash:", paymentHash);
+
         const start = Date.now();
         const interval = setInterval(async () => {
             if (Date.now() - start > timeout) {
