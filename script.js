@@ -218,6 +218,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
 
         await QRCode.toCanvas(canvas, invoice, { width: 200 });
 
+        const invoiceText = document.getElementById('invoice-text');
         invoiceText.value = invoice;
 
         document.getElementById('copy-invoice-btn').onclick = () => {
