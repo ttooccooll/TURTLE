@@ -230,7 +230,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         const statusEl = document.getElementById('qr-status');
         statusEl.textContent = 'Waiting for payment...';
 
-        const paid = await waitForPayment(invoiceId, statusEl);
+        const paid = await waitForPayment(paymentHash, statusEl);
         if (paid) {
             showMessage("Payment received! Thank you!");
             closeModal('payment-qr-modal');
