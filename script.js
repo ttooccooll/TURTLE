@@ -204,7 +204,8 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
 
 
         const invoice = data.paymentRequest;
-        const invoiceId = data.externalId;
+        const paymentHash = data.paymentHash;
+
 
 
         showModal('payment-qr-modal');
@@ -259,7 +260,7 @@ function waitForPayment(invoiceId, statusEl, timeout = 5*60*1000) {
             }
 
             try {
-                const resp = await fetch(`/api/check-invoice?id=${invoiceId}`);
+                const resp = await fetch(`/api/check-invoice?paymentHash=${paymentHash}`);
                 if (!resp.ok) throw new Error('Invoice check failed');
 
                 const data = await resp.json();
