@@ -199,13 +199,13 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         });
 
         const data = await resp.json();
-
-        if (!data.paymentRequest || !data.internalId) {
+        if (!data.paymentRequest || !data.externalId)
             throw new Error('Invoice generation failed');
-        }
+
 
         const invoice = data.paymentRequest;
-        const invoiceInternalId = data.internalId;
+        const invoiceId = data.externalId;
+
 
         showModal('payment-qr-modal');
 
@@ -229,8 +229,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         const statusEl = document.getElementById('qr-status');
         statusEl.textContent = 'Waiting for payment...';
 
-        const paid = await waitForPayment(invoiceInternalId, statusEl);
-
+        const paid = await waitForPayment(invoiceId, statusEl);
         if (paid) {
             showMessage("Payment received! Thank you!");
             closeModal('payment-qr-modal');
@@ -249,40 +248,32 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
     }
 }
 
-function waitForPayment(invoiceId, statusEl, timeout = 5 * 60 * 1000) {
+function waitForPayment(invoiceId, statusEl, timeout = 5*60*1000) {
     return new Promise((resolve) => {
         const start = Date.now();
         const interval = setInterval(async () => {
             if (Date.now() - start > timeout) {
                 clearInterval(interval);
-                statusEl.textContent = 'Payment timeout';
                 resolve(false);
                 return;
             }
 
             try {
-                const resp = await fetch(`/api/check-invoice?id=${encodeURIComponent(invoiceId)}`);
-                if (!resp.ok) {
-                    console.error('Invoice check failed with status', resp.status);
-                    return;
-                }
+                const resp = await fetch(`/api/check-invoice?id=${invoiceId}`);
+                if (!resp.ok) throw new Error('Invoice check failed');
 
                 const data = await resp.json();
                 if (data.paid) {
                     clearInterval(interval);
                     statusEl.textContent = 'Payment received!';
                     resolve(true);
-                } else {
-                    statusEl.textContent = 'Waiting for payment...';
                 }
-
             } catch (err) {
-                console.error('Error checking invoice:', err);
+                console.error(err);
             }
-        }, 2000);
+        }, 1000);
     });
 }
-
 
 async function handlePayment() {
     const tipBtn = document.getElementById('tip-btn');
