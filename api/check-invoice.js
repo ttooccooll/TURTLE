@@ -39,12 +39,19 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "GraphQL error", details: json.errors });
     }
 
-    const status = json.data.lnInvoicePaymentStatusByHash.status;
+    const invoiceStatus = json.data?.lnInvoicePaymentStatusByHash;
+
+    if (!invoiceStatus) {
+      return res.status(404).json({ error: "Invoice not found", details: json });
+    }
+
+    const status = invoiceStatus.status;
 
     return res.status(200).json({
       paid: status === "PAID",
       status
     });
+
   } catch (err) {
     return res.status(500).json({ error: "Blink API failed", details: err.message });
   }
