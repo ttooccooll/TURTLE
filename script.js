@@ -218,7 +218,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         }
 
         if (!resp.ok || !data.paymentRequest || !data.paymentHash) {
-            console.error('Blink API returned invalid data:', data);
+            console.error('Blink API returned invalid data:', data, resp.status);
             throw new Error('Invoice generation failed');
         }
 
@@ -330,6 +330,8 @@ async function handlePayment() {
             } catch (weblnErr) {
                 console.warn("WebLN failed, falling back to QR:", weblnErr);
             }
+        } else {
+            console.info("WebLN not available, using QR fallback");
         }
 
         const qrSuccess = await payWithQR(100, "Turtle Game Payment");
