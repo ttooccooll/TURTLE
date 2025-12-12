@@ -17,6 +17,7 @@ export default async function handler(req, res) {
                     ... on InitiationViaLn {
                       paymentRequest
                       paymentHash
+                      externalId
                     }
                   }
                   settlementVia {

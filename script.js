@@ -200,7 +200,9 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         });
 
         const data = await resp.json();
-        if (!data.paymentRequest || !data.paymentRequest) throw new Error('Invoice generation failed');
+        if (!data.paymentRequest || !data.externalId)
+            throw new Error('Invoice generation failed');
+
 
         const invoice = data.paymentRequest;
         const invoiceId = data.externalId;
@@ -216,7 +218,6 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
 
         await QRCode.toCanvas(canvas, invoice, { width: 200 });
 
-        const invoiceText = document.getElementById('invoice-text');
         invoiceText.value = invoice;
 
         document.getElementById('copy-invoice-btn').onclick = () => {
