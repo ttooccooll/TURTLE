@@ -29,7 +29,8 @@ export default async function handler(req, res) {
         amount: parseInt(amount),
         walletId: process.env.BLINK_WALLET_ID,
         memo: memo || "Turtle Game Payment",
-        externalId: invoiceId
+        externalId: invoice.externalId
+
       }
     };
 
