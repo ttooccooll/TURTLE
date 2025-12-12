@@ -192,6 +192,9 @@ async function payInvoice(paymentRequest) {
 }
 
 async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
+    const tipBtn = document.getElementById('tip-btn');
+    tipBtn.disabled = true;
+
     try {
         const resp = await fetch('/api/create-invoice', {
             method: 'POST',
@@ -200,26 +203,22 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
             body: JSON.stringify({ amount: amountSats, memo })
         });
 
+        const text = await resp.text();
         let data;
-        const contentType = resp.headers.get('content-type');
-
-        if (contentType && contentType.includes('application/json')) {
-            try {
-                data = await resp.json();
-            } catch (jsonErr) {
-                const text = await resp.text();
-                console.error('Failed to parse JSON:', text);
-                throw new Error('Invoice generation failed: invalid JSON response');
-            }
-        } else {
-            const text = await resp.text();
-            console.error('Server returned non-JSON response:', text);
-            throw new Error('Invoice generation failed: server returned non-JSON response');
+        try {
+            data = JSON.parse(text);
+        } catch (err) {
+            console.error('Failed to parse JSON from server:', text, err);
+            alert('Payment failed: invalid server response.');
+            tipBtn.disabled = false;
+            return false;
         }
 
         if (!resp.ok || !data.paymentRequest || !data.paymentHash) {
-            console.error('Blink API returned invalid data:', data, resp.status);
-            throw new Error('Invoice generation failed');
+            console.error('Invalid invoice data from server:', data);
+            alert('Payment failed: could not generate invoice.');
+            tipBtn.disabled = false;
+            return false;
         }
 
         const invoice = data.paymentRequest;
@@ -250,17 +249,19 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         if (paid) {
             showMessage("Payment received! Thank you!");
             closeModal('payment-qr-modal');
+            tipBtn.disabled = false;
             return true;
         } else {
             alert("Payment not received. Please try again.");
             closeModal('payment-qr-modal');
+            tipBtn.disabled = false;
             return false;
         }
 
     } catch (err) {
         console.error('QR payment failed:', err);
         alert('Payment failed. Please try again.');
-        closeModal('payment-qr-modal');
+        tipBtn.disabled = false;
         return false;
     }
 }
