@@ -50,16 +50,16 @@ function setSafeTimeout(fn, delay) {
 
 function getWordListURL(lang) {
     const map = {
-        english: "english.txt",
-        spanish: "spanish.txt",
-        french: "french.txt",
-        german: "german.txt",
-        afrikaans: "afrikaans.txt",
-        xhosa: "xhosa.txt",
-        italian: "italian.txt",
-        zulu: "zulu.txt",
-        swahili: "swahili.txt",
-        portuguese: "portuguese.txt",
+    afrikaans: "afrikaans.txt",
+    english: "english.txt",
+    french: "french.txt",
+    german: "german.txt",
+    italian: "italian.txt",
+    portuguese: "portuguese.txt",
+    spanish: "spanish.txt",
+    swahili: "swahili.txt",
+    xhosa: "xhosa.txt",
+    zulu: "zulu.txt",
     };
 
     return `/words/${map[lang]}`;
