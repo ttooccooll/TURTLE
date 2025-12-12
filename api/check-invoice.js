@@ -2,17 +2,15 @@ import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
   const invoiceId = req.query.id;
-  if (!invoiceId) {
-    return res.status(400).json({ error: 'Missing invoice ID' });
-  }
+  if (!invoiceId) return res.status(400).json({ error: 'Missing invoice ID' });
 
   try {
     const query = `
-      query CheckInvoice($id: ID!) {
-        lightningInvoice(id: $id) {
+      query LnInvoice($id: ID!) {
+        lnInvoice(id: $id) {
           id
           memo
-          satoshi
+          amount
           settled
         }
       }
@@ -42,15 +40,13 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Blink GraphQL error", details: json.errors });
     }
 
-    const invoice = json.data.lightningInvoice;
+    const invoice = json.data.lnInvoice;
 
-    if (!invoice) {
-      return res.status(404).json({ error: "Invoice not found" });
-    }
+    if (!invoice) return res.status(404).json({ error: "Invoice not found" });
 
     return res.json({
       paid: invoice.settled === true,
-      satoshi: invoice.satoshi,
+      satoshi: invoice.amount,
       memo: invoice.memo
     });
 
