@@ -190,6 +190,37 @@ async function payInvoice(paymentRequest) {
   }
 }
 
+// --- Wait for payment by polling the check-invoice endpoint ---
+function waitForPayment(paymentHash, statusEl, timeout = 5 * 60 * 1000) {
+    return new Promise((resolve) => {
+        const start = Date.now();
+
+        const interval = setInterval(async () => {
+            if (Date.now() - start > timeout) {
+                clearInterval(interval);
+                statusEl.textContent = 'Payment timeout.';
+                resolve(false);
+                return;
+            }
+
+            try {
+                const resp = await fetch(`/api/check-invoice?paymentHash=${paymentHash}`);
+                if (!resp.ok) throw new Error('Invoice check failed');
+
+                const data = await resp.json();
+                if (data.paid) {
+                    clearInterval(interval);
+                    statusEl.textContent = 'Payment received!';
+                    resolve(true);
+                }
+            } catch (err) {
+                console.error('Error checking invoice:', err);
+            }
+        }, 1000);
+    });
+}
+
+// --- Generate invoice + display QR code + wait for payment ---
 async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
     try {
         const resp = await fetch('/api/create-invoice', {
@@ -199,23 +230,20 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         });
 
         const data = await resp.json();
-        if (!data.paymentRequest || !data.externalId)
+        if (!data.paymentRequest || !data.paymentHash)
             throw new Error('Invoice generation failed');
-
 
         const invoice = data.paymentRequest;
         const paymentHash = data.paymentHash;
 
-
-
         showModal('payment-qr-modal');
 
+        // Render QR code
         const canvas = document.getElementById('qr-code');
         const ctx = canvas.getContext('2d');
         canvas.width = 200;
         canvas.height = 200;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         await QRCode.toCanvas(canvas, invoice, { width: 200 });
 
         const invoiceText = document.getElementById('invoice-text');
@@ -224,7 +252,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         document.getElementById('copy-invoice-btn').onclick = () => {
             invoiceText.select();
             document.execCommand('copy');
-            alert('Invoice copied to clipboard!');
+            alert('Invoice copied!');
         };
 
         const statusEl = document.getElementById('qr-status');
@@ -249,40 +277,6 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
     }
 }
 
-function waitForPayment(paymentHash, statusEl, timeout = 5*60*1000) {
-    return new Promise((resolve) => {
-        if (!paymentHash) {
-            console.error("waitForPayment called without paymentHash!");
-            resolve(false);
-            return;
-        }
-
-        console.log("Waiting for payment for hash:", paymentHash);
-
-        const start = Date.now();
-        const interval = setInterval(async () => {
-            if (Date.now() - start > timeout) {
-                clearInterval(interval);
-                resolve(false);
-                return;
-            }
-
-            try {
-                const resp = await fetch(`/api/check-invoice?paymentHash=${paymentHash}`);
-                if (!resp.ok) throw new Error('Invoice check failed');
-
-                const data = await resp.json();
-                if (data.paid) {
-                    clearInterval(interval);
-                    statusEl.textContent = 'Payment received!';
-                    resolve(true);
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        }, 1000);
-    });
-}
 
 async function handlePayment() {
     const tipBtn = document.getElementById('tip-btn');
