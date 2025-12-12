@@ -29,16 +29,14 @@ export default async function handler(req, res) {
       body: JSON.stringify({ query, variables })
     });
 
-    // If Blink returns an error page instead of JSON
     if (!response.ok) {
-      const text = await response.text(); // read the HTML or error message
+      const text = await response.text();
       console.error('Blink API returned non-JSON:', text);
       return res.status(response.status).json({ error: 'Blink API error', details: text });
     }
 
     const json = await response.json();
 
-    // GraphQL errors
     if (json.errors) {
       console.error("Blink GraphQL error:", json.errors);
       return res.status(500).json({ error: "Blink GraphQL error", details: json.errors });
