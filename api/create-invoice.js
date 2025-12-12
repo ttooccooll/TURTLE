@@ -10,12 +10,13 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Amount must be a number' });
 
   try {
-    const invoiceId = crypto.randomUUID?.() || Math.random().toString(36).slice(2);
+    const externalId = crypto.randomUUID?.() || Math.random().toString(36).slice(2);
 
     const query = `
       mutation LnInvoiceCreate($input: LnInvoiceCreateInput!) {
         lnInvoiceCreate(input: $input) {
           invoice {
+            id
             paymentRequest
             externalId
           }
@@ -29,7 +30,7 @@ export default async function handler(req, res) {
         amount: parseInt(amount),
         walletId: process.env.BLINK_WALLET_ID,
         memo: memo || "Turtle Game Payment",
-        externalId: invoiceId
+        externalId
       }
     };
 
@@ -55,7 +56,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       paymentRequest: invoice.paymentRequest,
-      externalId: invoice.externalId
+      externalId: invoice.externalId // frontend uses this for polling
     });
 
   } catch (err) {
