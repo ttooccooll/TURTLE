@@ -151,33 +151,24 @@ async function generateInvoiceForBlink(amountSats) {
     const resp = await fetch('/api/create-invoice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
       body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
     });
 
-    let data;
-    const contentType = resp.headers.get('content-type');
-
-    if (contentType && contentType.includes('application/json')) {
-      data = await resp.json();
-    } else {
-      const text = await resp.text();
-      console.error('Server returned non-JSON:', text);
-      throw new Error('Failed to generate invoice: server returned non-JSON response');
-    }
+    const data = await resp.json();
 
     if (!resp.ok || !data.paymentRequest) {
-      console.error("Blink API error:", data);
-      throw new Error("Failed to generate invoice");
+      console.error('Blink API error:', data);
+      throw new Error('Failed to generate invoice');
     }
 
     return data.paymentRequest;
 
   } catch (err) {
-    console.error("Invoice generation error:", err);
+    console.error('Invoice generation error:', err);
     throw err;
   }
 }
+
 
 async function payInvoice(paymentRequest) {
   if (typeof WebLN === 'undefined') throw new Error("WebLN not available");
