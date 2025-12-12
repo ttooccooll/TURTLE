@@ -151,6 +151,7 @@ async function generateInvoiceForBlink(amountSats) {
     const resp = await fetch('/api/create-invoice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
       body: JSON.stringify({ amount: amountSats, memo: 'Turtle Game Payment' })
     });
 
@@ -195,6 +196,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         const resp = await fetch('/api/create-invoice', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
             body: JSON.stringify({ amount: amountSats, memo })
         });
 
