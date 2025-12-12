@@ -200,8 +200,25 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
             body: JSON.stringify({ amount: amountSats, memo })
         });
 
-        const data = await resp.json();
-        if (!data.paymentRequest || !data.paymentHash) {
+        let data;
+        const contentType = resp.headers.get('content-type');
+
+        if (contentType && contentType.includes('application/json')) {
+            try {
+                data = await resp.json();
+            } catch (jsonErr) {
+                const text = await resp.text();
+                console.error('Failed to parse JSON:', text);
+                throw new Error('Invoice generation failed: invalid JSON response');
+            }
+        } else {
+            const text = await resp.text();
+            console.error('Server returned non-JSON response:', text);
+            throw new Error('Invoice generation failed: server returned non-JSON response');
+        }
+
+        if (!resp.ok || !data.paymentRequest || !data.paymentHash) {
+            console.error('Blink API returned invalid data:', data);
             throw new Error('Invoice generation failed');
         }
 
@@ -235,18 +252,19 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
             closeModal('payment-qr-modal');
             return true;
         } else {
-            alert("Payment not received. ${err.message}");
+            alert("Payment not received. Please try again.");
             closeModal('payment-qr-modal');
             return false;
         }
 
     } catch (err) {
         console.error('QR payment failed:', err);
-        alert('Payment failed. ${err.message}');
+        alert('Payment failed. Please try again.');
         closeModal('payment-qr-modal');
         return false;
     }
 }
+
 
 function waitForPayment(paymentHash, statusEl, timeout = 5 * 60 * 1000) {
     return new Promise((resolve) => {
