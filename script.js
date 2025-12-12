@@ -269,6 +269,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
 function waitForPayment(paymentHash, statusEl, timeout = 5 * 60 * 1000) {
     return new Promise((resolve) => {
         const start = Date.now();
+
         const interval = setInterval(async () => {
             if (Date.now() - start > timeout) {
                 clearInterval(interval);
@@ -277,22 +278,40 @@ function waitForPayment(paymentHash, statusEl, timeout = 5 * 60 * 1000) {
             }
 
             try {
-                const resp = await fetch(`/api/check-invoice?paymentHash=${paymentHash}`);
-                if (!resp.ok) throw new Error('Invoice check failed');
+                const resp = await fetch(`/api/check-invoice?paymentHash=${paymentHash}`, {
+                    credentials: 'same-origin',
+                    cache: 'no-store'
+                });
 
-                const data = await resp.json();
+                if (!resp.ok) throw new Error(`Invoice check failed: ${resp.status}`);
+
+                let data;
+                const contentType = resp.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    try {
+                        data = await resp.json();
+                    } catch (jsonErr) {
+                        const text = await resp.text();
+                        console.error('Failed to parse JSON in waitForPayment:', text);
+                        return;
+                    }
+                } else {
+                    const text = await resp.text();
+                    console.error('Non-JSON response in waitForPayment:', text);
+                    return;
+                }
+
                 if (data.paid) {
                     clearInterval(interval);
                     statusEl.textContent = 'Payment received!';
                     resolve(true);
                 }
             } catch (err) {
-                console.error(err);
+                console.error('waitForPayment error:', err);
             }
         }, 1000);
     });
 }
-
 
 
 async function handlePayment() {
