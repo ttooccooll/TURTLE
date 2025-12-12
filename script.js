@@ -187,7 +187,7 @@ async function payInvoice(paymentRequest) {
     await webln.enable();
     await webln.sendPayment(paymentRequest);
   } catch (err) {
-    throw new Error("Payment failed");
+    throw new Error("Payment failed ${err.message}");
   }
 }
 
