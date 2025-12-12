@@ -1,18 +1,16 @@
 import fetch from "node-fetch";
 
 export default async function handler(req, res) {
-  const { paymentHash } = req.query;
+  const paymentHash = req.query.paymentHash;
   if (!paymentHash) {
     return res.status(400).json({ error: "Missing paymentHash" });
   }
 
   try {
     const query = `
-      query GetInvoice($paymentHash: PaymentHash!) {
-        invoice(paymentHash: $paymentHash) {
-          paymentHash
-          paymentRequest
-          status
+      query CheckInvoiceStatus($paymentHash: PaymentHash!) {
+        invoiceByPaymentHash(paymentHash: $paymentHash) {
+          paymentStatus
           satoshis
         }
       }
@@ -29,24 +27,30 @@ export default async function handler(req, res) {
       body: JSON.stringify({ query, variables })
     });
 
-    const json = await response.json();
+    if (!response.ok) {
+      const text = await response.text();
+      console.error("Blink API HTTP error:", response.status, text);
+      return res.status(response.status).json({ error: "Blink API error", details: text });
+    }
 
+    const json = await response.json();
     if (json.errors) {
+      console.error("Blink GraphQL error:", json.errors);
       return res.status(500).json({ error: "Blink GraphQL error", details: json.errors });
     }
 
-    const inv = json.data.invoice;
+    const inv = json.data.invoiceByPaymentHash;
     if (!inv) {
       return res.status(404).json({ error: "Invoice not found" });
     }
 
     return res.status(200).json({
-      paid: inv.status === "PAID",
+      paid: inv.paymentStatus === "PAID",
       satoshi: inv.satoshis
     });
 
   } catch (err) {
     console.error("Server error:", err);
-    res.status(500).json({ error: "Server error", details: err.toString() });
+    return res.status(500).json({ error: "Server error", details: err.toString() });
   }
 }
