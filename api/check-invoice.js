@@ -1,5 +1,4 @@
 import fetch from 'node-fetch';
-import crypto from 'crypto';
 
 export default async function handler(req, res) {
   const invoiceId = req.query.id;
@@ -8,78 +7,57 @@ export default async function handler(req, res) {
   }
 
   try {
-    // GraphQL query: fetch recent transactions and find the invoice by externalId
     const query = `
-      query PaymentsWithProof($first: Int!) {
-        me {
-          defaultAccount {
-            transactions(first: $first) {
-              edges {
-                node {
-                  initiationVia {
-                    ... on InitiationViaLn {
-                      externalId
-                      paymentHash
-                    }
-                  }
-                  settlementVia {
-                    ... on SettlementViaLn {
-                      preImage
-                    }
-                  }
-                }
-              }
-            }
-          }
+      query CheckInvoice($id: ID!) {
+        lightningInvoice(id: $id) {
+          id
+          memo
+          satoshi
+          settled
         }
       }
     `;
 
-    const variables = { first: 50 }; // fetch last 50 transactions
+    const variables = { id: invoiceId };
 
     const response = await fetch(process.env.BLINK_SERVER, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'X-API-KEY': process.env.BLINK_READ_API_KEY // new read API key
+        "Content-Type": "application/json",
+        "X-API-KEY": process.env.BLINK_API_KEY
       },
       body: JSON.stringify({ query, variables })
     });
 
-    const data = await response.json();
-
-    if (data.errors) {
-      console.error('Blink GraphQL errors:', data.errors);
-      return res.status(500).json({ error: 'Blink GraphQL error', details: data.errors });
+    // If Blink returns an error page instead of JSON
+    if (!response.ok) {
+      const text = await response.text(); // read the HTML or error message
+      console.error('Blink API returned non-JSON:', text);
+      return res.status(response.status).json({ error: 'Blink API error', details: text });
     }
 
-    const transactions = data.data.me.defaultAccount.transactions.edges;
+    const json = await response.json();
 
-    // Find the transaction that matches the externalId
-    const tx = transactions.find(
-      t => t.node.initiationVia?.externalId === invoiceId
-    );
-
-    if (!tx) {
-      return res.status(404).json({ error: 'Invoice not found' });
+    // GraphQL errors
+    if (json.errors) {
+      console.error("Blink GraphQL error:", json.errors);
+      return res.status(500).json({ error: "Blink GraphQL error", details: json.errors });
     }
 
-    const { paymentHash } = tx.node.initiationVia;
-    const preImage = tx.node.settlementVia?.preImage;
+    const invoice = json.data.lightningInvoice;
 
-    // If preImage exists, payment is settled
-    if (!preImage) {
-      return res.status(200).json({ paid: false, paymentRequest: invoiceId });
+    if (!invoice) {
+      return res.status(404).json({ error: "Invoice not found" });
     }
 
-    // Verify payment hash
-    const hash = crypto.createHash('sha256').update(Buffer.from(preImage, 'hex')).digest('hex');
-    const paid = hash === paymentHash;
-
-    return res.status(200).json({ paid, paymentRequest: invoiceId });
+    return res.json({
+      paid: invoice.settled === true,
+      satoshi: invoice.satoshi,
+      memo: invoice.memo
+    });
 
   } catch (err) {
-    console.error('Server exception:', err);
-    return res.status(500).json({ error: 'Server error', details: err.message });
+    console.error("Server exception:", err);
+    return res.status(500).json({ error: "Server error", details: err.toString() });
   }
 }
