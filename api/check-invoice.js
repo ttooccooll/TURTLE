@@ -46,6 +46,6 @@ export default async function handler(req, res) {
       status
     });
   } catch (err) {
-    return res.status(500).json({ error: "Server error", details: err.toString() });
+    return res.status(500).json({ error: "Blink API failed", details: err.message });
   }
 }
