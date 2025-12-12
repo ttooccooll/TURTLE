@@ -249,7 +249,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
     }
 }
 
-function waitForPayment(invoiceId, statusEl, timeout = 5*60*1000) {
+function waitForPayment(paymentHash, statusEl, timeout = 5*60*1000) {
     return new Promise((resolve) => {
         const start = Date.now();
         const interval = setInterval(async () => {
