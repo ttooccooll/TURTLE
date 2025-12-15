@@ -28,10 +28,8 @@ belik
 belki
 besin
 beton
-bezin
 biber
 birim
-birka
 bisik
 bitki
 bodur
@@ -42,7 +40,6 @@ buhar
 bulut
 burun
 butun
-cagli
 ceket
 cerez
 cesit
@@ -53,7 +50,6 @@ cokar
 copcu
 dalga
 damla
-darac
 davul
 deger
 dekan
@@ -64,8 +60,6 @@ depol
 derin
 dersi
 devin
-dogan
-dogru
 dolap
 duman
 duvar
@@ -78,10 +72,8 @@ ender
 enzim
 espri
 etkin
-evren
 fasul
 felek
-fenal
 ferah
 ferma
 fizil
@@ -96,10 +88,7 @@ gunes
 gurur
 hasar
 hepsi
-hirsu
 huzur
-icabi
-icrac
 ikram
 iksir
 ilgin
@@ -113,7 +102,6 @@ isyan
 itici
 macun
 maden
-mahya
 makas
 makul
 malik
@@ -188,9 +176,7 @@ tahir
 takip
 tamam
 tarih
-ufkun
 ulusu
-umran
 uncuk
 usule
 uskun
