@@ -644,7 +644,7 @@ document.addEventListener('keydown', (e)=>{
 });
 
 document.addEventListener('DOMContentLoaded', async ()=>{
-    const savedLang = localStorage.getItem('turtleLang') || 'en';
+    const savedLang = localStorage.getItem('turtleLang') || 'english';
     currentLanguage = savedLang;
     document.getElementById('language-select').value = savedLang;
     await loadWordList(currentLanguage);
