@@ -114,14 +114,6 @@ async function startNewGame() {
     createGameBoard();
     resetKeyboard();
 
-    function showError(text, duration = 3000) {
-        messageContainer.textContent = text;
-        messageContainer.classList.add('show', 'error');
-        setSafeTimeout(() => {
-            messageContainer.classList.remove('show', 'error');
-        }, duration);
-    }
-
     targetWord = WORDS[Math.floor(Math.random() * WORDS.length)];
 
     let paymentRequired = !canPlayFreeGameToday();
@@ -505,6 +497,14 @@ function showMessage(text) {
     messageContainer.textContent = text;
     messageContainer.classList.add('show');
     setSafeTimeout(() => messageContainer.classList.remove('show'), 2000);
+}
+
+function showError(text, duration = 3000) {
+    messageContainer.textContent = text;
+    messageContainer.classList.add('show', 'error');
+    setSafeTimeout(() => {
+        messageContainer.classList.remove('show', 'error');
+    }, duration);
 }
 
 async function reloadGameForLanguageChange() {
