@@ -672,7 +672,7 @@ document.getElementById('tip-btn').addEventListener('click', async () => {
 
     } catch (err) {
         console.error("Tip payment failed:", err);
-        showMessage("Tip failed. Please try again.");
+        showError("Tip failed. Please try again.");
         tipBtn.disabled = false;
     }
 });
