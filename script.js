@@ -56,6 +56,7 @@ function getWordListURL(lang) {
     portuguese: "portuguese.txt",
     spanish: "spanish.txt",
     swahili: "swahili.txt",
+    turkish: "turkish.txt",
     vietnamese: "vietnamese.txt",
     xhosa: "xhosa.txt",
     zulu: "zulu.txt",
