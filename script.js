@@ -494,12 +494,16 @@ function updateKeyboard(letter, state) {
 }
 
 function showMessage(text) {
+    activeTimeouts.forEach(clearTimeout);
+    activeTimeouts = [];
     messageContainer.textContent = text;
     messageContainer.classList.add('show');
     setSafeTimeout(() => messageContainer.classList.remove('show'), 2000);
 }
 
 function showError(text, duration = 3000) {
+    activeTimeouts.forEach(clearTimeout);
+    activeTimeouts = [];
     messageContainer.textContent = text;
     messageContainer.classList.add('show', 'error');
     setSafeTimeout(() => {
