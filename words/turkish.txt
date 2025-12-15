@@ -80,7 +80,6 @@ gelin
 genel
 geril
 giden
-gulum
 gunes
 gurur
 hasar
@@ -171,7 +170,6 @@ tahir
 takip
 tamam
 tarih
-uskun
 uzman
 uzmek
 uzuna
