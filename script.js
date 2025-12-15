@@ -26,20 +26,18 @@ function handleFirstKeypress(e) {
 
 async function enableWebLN() {
   if (typeof WebLN === 'undefined') {
-    alert('WebLN is not loaded or available in your browser.');
-    return;
+    console.info('WebLN not available; QR payment will be used.');
+    return false;
   }
 
   try {
     const webln = await WebLN.requestProvider();
     await webln.enable();
     console.log("WebLN enabled successfully!");
-
-    const info = await webln.getInfo();
-    console.log("Node Info:", info);
+    return true;
   } catch (error) {
-    console.error("Error:", error);
-    alert("WebLN provider not found. Please install a WebLN-compatible wallet.");
+    console.warn("WebLN enable failed; falling back to QR:", error);
+    return false;
   }
 }
 
@@ -115,6 +113,14 @@ async function startNewGame() {
 
     createGameBoard();
     resetKeyboard();
+
+    function showError(text, duration = 3000) {
+        messageContainer.textContent = text;
+        messageContainer.classList.add('show', 'error');
+        setSafeTimeout(() => {
+            messageContainer.classList.remove('show', 'error');
+        }, duration);
+    }
 
     targetWord = WORDS[Math.floor(Math.random() * WORDS.length)];
 
@@ -209,14 +215,14 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
             data = JSON.parse(text);
         } catch (err) {
             console.error('Failed to parse JSON from server:', text, err);
-            alert('Payment failed: invalid server response.');
+            showError('Payment failed: invalid server response.');
             tipBtn.disabled = false;
             return false;
         }
 
         if (!resp.ok || !data.paymentRequest || !data.paymentHash) {
             console.error('Invalid invoice data from server:', data);
-            alert('Payment failed: could not generate invoice.');
+            showError('Could not generate invoice. Please try again.');
             tipBtn.disabled = false;
             return false;
         }
@@ -262,7 +268,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
             tipBtn.disabled = false;
             return true;
         } else {
-            alert("Payment not received. Please try again.");
+            showError("Payment not received. Invoice expired.");
             closeModal('payment-qr-modal');
             tipBtn.disabled = false;
             return false;
@@ -270,7 +276,7 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
 
     } catch (err) {
         console.error('QR payment failed:', err);
-        alert('Payment failed. Please try again.');
+        showError('Payment failed. Please try again.');
         tipBtn.disabled = false;
         return false;
     }
@@ -334,7 +340,7 @@ async function handlePayment() {
             try {
                 const invoice = await generateInvoiceForBlink(100);
                 await payInvoice(invoice);
-                alert("Payment of 100 sats successful!");
+                showMessage("Payment received! Game unlocked ⚡");
                 tipBtn.disabled = false;
                 return true;
             } catch (weblnErr) {
@@ -348,7 +354,7 @@ async function handlePayment() {
 
     } catch (err) {
         console.error("Payment failed:", err);
-        alert("Payment failed. Please try again.");
+        showError('Payment failed. Please try again.');
         tipBtn.disabled = false;
         return false;
     }
@@ -662,11 +668,11 @@ document.getElementById('tip-btn').addEventListener('click', async () => {
     try {
         const invoiceTip = await generateInvoiceForBlink(10000);
         await payInvoice(invoiceTip);
-        alert("Tip of 10,000 sats successful!");
+        showMessage("Thank you for the 10,000 sats tip 💛");
 
     } catch (err) {
         console.error("Tip payment failed:", err);
-        alert("Tip failed. Please try again.");
+        showMessage("Tip failed. Please try again.");
         tipBtn.disabled = false;
     }
 });

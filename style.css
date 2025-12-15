@@ -221,6 +221,11 @@
             opacity: 1;
         }
 
+        #message-container.error {
+            background: #8b0000;
+            color: #fff;
+        }
+
         .modal {
             position: fixed;
             top: 0;
