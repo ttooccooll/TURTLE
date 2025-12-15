@@ -109,7 +109,6 @@ mamut
 manav
 marul
 masal
-matas
 medya
 melek
 merak
@@ -166,7 +165,6 @@ simit
 siyah
 sofra
 somon
-suvar
 sudan
 suluk
 sunak
