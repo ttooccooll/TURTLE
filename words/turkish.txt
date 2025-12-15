@@ -71,7 +71,6 @@ dogru
 dolap
 duman
 duvar
-eczac
 efkar
 ekmek
 elmas
@@ -83,7 +82,6 @@ espri
 etkin
 evren
 fasul
-fazil
 felek
 fenal
 ferah
