@@ -26,7 +26,6 @@ bebek
 bedel
 belik
 belki
-beril
 besin
 beton
 bezin
@@ -47,7 +46,6 @@ cagli
 ceket
 cerez
 cesit
-cihan
 cigli
 cimri
 cisim
@@ -84,7 +82,6 @@ enzim
 espri
 etkin
 evren
-faruk
 fasul
 fazil
 felek
@@ -160,7 +157,6 @@ nemli
 nisan
 nutuk
 onluk
-orhan
 ortal
 otizm
 papat
