@@ -75,15 +75,12 @@ etkin
 fasul
 felek
 ferah
-ferma
-fizil
 gazap
 gelin
 genel
 geril
 giden
 gulum
-gunel
 gunes
 gurur
 hasar
@@ -174,9 +171,6 @@ tahir
 takip
 tamam
 tarih
-ulusu
-uncuk
-usule
 uskun
 uzman
 uzmek
