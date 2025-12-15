@@ -236,10 +236,20 @@ async function payWithQR(amountSats, memo = 'Turtle Game Payment') {
         const invoiceText = document.getElementById('invoice-text');
         invoiceText.value = invoice;
 
-        document.getElementById('copy-invoice-btn').onclick = () => {
-            invoiceText.select();
-            document.execCommand('copy');
-            alert('Invoice copied to clipboard!');
+        document.getElementById('copy-invoice-btn').onclick = async () => {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(invoiceText.value);
+                } else {
+                    invoiceText.select();
+                    document.execCommand('copy');
+                }
+                document.getElementById('qr-status').textContent = 'Invoice copied 📋';
+            } catch (err) {
+                invoiceText.select();
+                document.execCommand('copy');
+                document.getElementById('qr-status').textContent = 'Invoice copied 📋';
+            }
         };
 
         const statusEl = document.getElementById('qr-status');

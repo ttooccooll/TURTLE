@@ -15,7 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 </head>
 <body>
-    <header>
+    <header role="banner">
         <button class="icon-button" id="help-btn">?</button>
         <h1>TURTLE</h1>
         <button class="icon-button" id="stats-btn">📊</button>
@@ -38,8 +38,8 @@
         </select>
     </div>
 
-    <main>
-        <div id="game-board" tabindex="0"></div>
+    <main role="main">
+        <div id="game-board" tabindex="0" role="grid" aria-label="Word guessing board"></div>
     </main>
 
     <div id="keyboard">

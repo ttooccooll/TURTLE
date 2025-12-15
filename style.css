@@ -351,6 +351,12 @@
             color: #000;
             font-size: 0.7em;
         }
+        #language-select:not([value=""]) + .select-label,
+        #language-select:focus + .select-label {
+            top: -8px;
+            font-size: 12px;
+            color: #d7dadc;
+        }
 
         #tip-btn {
             background: linear-gradient(135deg, #f7931a, #ffae42);
@@ -383,7 +389,7 @@
                 padding: 8px;
             }
             main {
-                margin: 10px, 0;
+                margin: 10px 0;
             }
             .tile {
                 width: 42px;
@@ -415,9 +421,16 @@
             #help-modal h2 {
                 font-size: 10px;
             }
-            #help-modal tile {
+            #help-modal .tile {
                 width: 20px; 
                 height: 20px;
                 font-size: 10px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
             }
         }
