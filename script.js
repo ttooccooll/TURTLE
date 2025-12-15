@@ -9,7 +9,7 @@ let gameOver = false;
 let letterStates = {};
 let activeTimeouts = [];
 let isFocusSet = false;
-let currentLanguage = 'en';
+let currentLanguage = 'english';
 
 const gameBoard = document.getElementById('game-board');
 const messageContainer = document.getElementById('message-container');
