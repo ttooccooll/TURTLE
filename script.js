@@ -49,6 +49,7 @@ function setSafeTimeout(fn, delay) {
 function getWordListURL(lang) {
     const map = {
     afrikaans: "afrikaans.txt",
+    dutch: "dutch.txt",
     english: "english.txt",
     french: "french.txt",
     german: "german.txt",
