@@ -54,6 +54,7 @@ function getWordListURL(lang) {
     french: "french.txt",
     german: "german.txt",
     italian: "italian.txt",
+    polish: "polish.txt",
     portuguese: "portuguese.txt",
     spanish: "spanish.txt",
     swahili: "swahili.txt",
