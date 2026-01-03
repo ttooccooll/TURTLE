@@ -565,9 +565,6 @@ function showGameOver(won) {
     message.textContent = "Better luck next time!";
     answerDiv.innerHTML = `<p>The word was <strong>${targetWord}</strong></p>`;
   }
-  console.log("Leaderboard data:", data);
-  console.log("Leaderboard list element:", list);
-
   showModal("game-over-modal");
 }
 
@@ -628,7 +625,8 @@ async function loadLeaderboard(language = currentLanguage) {
         list.appendChild(li);
       });
     }
-
+    console.log("Leaderboard data:", data);
+    console.log("Leaderboard list element:", list);
     showModal("leaderboard-modal");
   } catch (err) {
     console.error(err);
