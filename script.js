@@ -727,16 +727,33 @@ document.addEventListener("keydown", (e) => {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const savedLang = localStorage.getItem("turtleLang") || "english";
-  const leaderboardLangSelect = document.getElementById("leaderboard-language");
   currentLanguage = savedLang;
-  if (leaderboardLangSelect) {
-    leaderboardLangSelect.value = currentLanguage;
 
+  const languageSelect = document.getElementById("language-select");
+  if (languageSelect) {
+    languageSelect.value = savedLang;
+    languageSelect.addEventListener("change", async (e) => {
+      const newLang = e.target.value;
+      currentLanguage = newLang;
+      localStorage.setItem("turtleLang", newLang);
+
+      await loadWordList(currentLanguage);
+      reloadGameForLanguageChange();
+    });
+  } else {
+    console.warn("Warning: #language-select element not found!");
+  }
+
+  const leaderboardLangSelect = document.getElementById("leaderboard-language");
+  if (leaderboardLangSelect) {
+    leaderboardLangSelect.value = savedLang;
     leaderboardLangSelect.addEventListener("change", (e) => {
       loadLeaderboard(e.target.value);
     });
+  } else {
+    console.warn("Warning: #leaderboard-language element not found!");
   }
-  document.getElementById("language-select").value = savedLang;
+
   await loadWordList(currentLanguage);
   setupKeyboard();
   loadStats();
@@ -751,16 +768,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     .addEventListener("click", () => showModal("stats-modal"));
   startNewGame();
 });
-
-document
-  .getElementById("language-select")
-  .addEventListener("change", async (e) => {
-    currentLanguage = e.target.value;
-    localStorage.setItem("turtleLang", currentLanguage);
-
-    await loadWordList(currentLanguage);
-    reloadGameForLanguageChange();
-  });
 
 document.getElementById("tip-btn").addEventListener("click", async () => {
   const tipBtn = document.getElementById("tip-btn");
