@@ -608,25 +608,28 @@ async function loadLeaderboard(language = currentLanguage) {
     const resp = await fetch(
       `https://turtle-leaderboard.jasonbohio.workers.dev/leaderboard/top?language=${language}`
     );
-
-    if (!resp.ok) throw new Error("Failed to load leaderboard");
-
     const data = await resp.json();
+    console.log("Leaderboard API returned:", data);
 
     const list = document.getElementById("leaderboard-list");
+    if (!list) return console.error("#leaderboard-list not found!");
+
     list.innerHTML = "";
 
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
       list.innerHTML = "<li>No scores yet</li>";
-    } else {
-      data.forEach((row, i) => {
-        const li = document.createElement("li");
-        li.textContent = `#${i + 1} – ${row.guesses} guesses`;
-        list.appendChild(li);
-      });
+      return;
     }
-    console.log("Leaderboard data:", data);
-    console.log("Leaderboard list element:", list);
+
+    data.forEach((row, i) => {
+      const li = document.createElement("li");
+      const date = new Date(row.created_at);
+      li.textContent = `#${i + 1} – ${
+        row.guesses
+      } guesses (${date.toLocaleDateString()})`;
+      list.appendChild(li);
+    });
+
     showModal("leaderboard-modal");
   } catch (err) {
     console.error(err);
