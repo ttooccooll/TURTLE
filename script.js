@@ -604,10 +604,10 @@ async function submitLeaderboardScore(guesses) {
   }
 }
 
-async function loadLeaderboard() {
+async function loadLeaderboard(language = currentLanguage) {
   try {
     const resp = await fetch(
-      `https://turtle-leaderboard.jasonbohio.workers.dev/leaderboard/top?language=${currentLanguage}`
+      `https://turtle-leaderboard.jasonbohio.workers.dev/leaderboard/top?language=${language}`
     );
 
     if (!resp.ok) throw new Error("Failed to load leaderboard");
@@ -617,16 +617,20 @@ async function loadLeaderboard() {
     const list = document.getElementById("leaderboard-list");
     list.innerHTML = "";
 
-    data.forEach((row, i) => {
-      const li = document.createElement("li");
-      li.textContent = `#${i + 1} – ${row.guesses} guesses`;
-      list.appendChild(li);
-    });
+    if (data.length === 0) {
+      list.innerHTML = "<li>No scores yet</li>";
+    } else {
+      data.forEach((row, i) => {
+        const li = document.createElement("li");
+        li.textContent = `#${i + 1} – ${row.guesses} guesses`;
+        list.appendChild(li);
+      });
+    }
 
     showModal("leaderboard-modal");
   } catch (err) {
-    showError("Could not load leaderboard");
     console.error(err);
+    showError("Could not load leaderboard");
   }
 }
 
@@ -723,7 +727,15 @@ document.addEventListener("keydown", (e) => {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const savedLang = localStorage.getItem("turtleLang") || "english";
+  const leaderboardLangSelect = document.getElementById("leaderboard-language");
   currentLanguage = savedLang;
+  if (leaderboardLangSelect) {
+    leaderboardLangSelect.value = currentLanguage;
+
+    leaderboardLangSelect.addEventListener("change", (e) => {
+      loadLeaderboard(e.target.value);
+    });
+  }
   document.getElementById("language-select").value = savedLang;
   await loadWordList(currentLanguage);
   setupKeyboard();
