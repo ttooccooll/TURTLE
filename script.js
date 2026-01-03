@@ -585,7 +585,30 @@ function loadStats() {
   updateGuessDistribution(stats.guessDistribution);
 }
 
+// Prompt user for Nostr npub
+async function promptNostrLogin() {
+  let npub = localStorage.getItem("turtleNpub");
+  if (!npub) {
+    npub = prompt("Enter your Nostr public key (npub) to log in for the leaderboard:");
+    if (npub && npub.startsWith("npub")) {
+      localStorage.setItem("turtleNpub", npub);
+      showMessage("Logged in with Nostr npub!");
+    } else {
+      showError("Invalid npub. Leaderboard will remain anonymous.");
+    }
+  } else {
+    showMessage("Logged in with your saved Nostr npub!");
+  }
+}
+
+// Modified submitLeaderboardScore
 async function submitLeaderboardScore(guesses) {
+  const npub = localStorage.getItem("turtleNpub");
+  if (!npub) {
+    console.warn("No Nostr npub found; skipping leaderboard submit");
+    return;
+  }
+
   try {
     await fetch(
       "https://turtle-leaderboard.jasonbohio.workers.dev/leaderboard/submit",
@@ -593,42 +616,45 @@ async function submitLeaderboardScore(guesses) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          npub,
           language: currentLanguage,
           guesses,
         }),
       }
     );
+    showMessage("Score submitted to leaderboard!");
   } catch (err) {
     console.warn("Leaderboard submit failed", err);
+    showError("Failed to submit score.");
   }
 }
 
+// Highlight current user in leaderboard
 async function loadLeaderboard(language = currentLanguage) {
   try {
+    const npub = localStorage.getItem("turtleNpub");
     const resp = await fetch(
       `https://turtle-leaderboard.jasonbohio.workers.dev/leaderboard/top?language=${language}`
     );
+    if (!resp.ok) throw new Error("Failed to load leaderboard");
+
     const data = await resp.json();
-    console.log("Leaderboard API returned:", data);
-
     const list = document.getElementById("leaderboard-list");
-    if (!list) return console.error("#leaderboard-list not found!");
-
     list.innerHTML = "";
 
-    if (!data || data.length === 0) {
+    if (data.length === 0) {
       list.innerHTML = "<li>No scores yet</li>";
-      return;
+    } else {
+      data.forEach((row, i) => {
+        const li = document.createElement("li");
+        li.textContent = `#${i + 1} – ${row.guesses} guesses`;
+        if (row.npub && row.npub === npub) {
+          li.style.fontWeight = "bold";
+          li.textContent += " (You!)";
+        }
+        list.appendChild(li);
+      });
     }
-
-    data.forEach((row, i) => {
-      const li = document.createElement("li");
-      const date = new Date(row.created_at);
-      li.textContent = `#${i + 1} – ${
-        row.guesses
-      } guesses (${date.toLocaleDateString()})`;
-      list.appendChild(li);
-    });
 
     showModal("leaderboard-modal");
   } catch (err) {
@@ -636,6 +662,12 @@ async function loadLeaderboard(language = currentLanguage) {
     showError("Could not load leaderboard");
   }
 }
+
+// Call login on game start
+document.addEventListener("DOMContentLoaded", async () => {
+  await promptNostrLogin();
+  // ... rest of your initialization code ...
+});
 
 function updateStats(won, guessNumber) {
   const stats = JSON.parse(localStorage.getItem("turtleStats")) || {
