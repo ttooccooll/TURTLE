@@ -1,174 +1,392 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Turtle</title>
-    <link rel="icon" href="turtle.jpg">
-    <script 
-        src="https://unpkg.com/webln@0.3.2/dist/webln.min.js" 
-        integrity="sha384-MpjpvOQqXz9nCoLUS/sR0bhLwGYuNPMOBN50jsqhnqAzDq0GiOI0u6oC5fHitzI2"
-        crossorigin="anonymous">
-    </script>
+    <link rel="icon" href="turtle.jpg" />
+    <script
+      src="https://unpkg.com/webln@0.3.2/dist/webln.min.js"
+      integrity="sha384-MpjpvOQqXz9nCoLUS/sR0bhLwGYuNPMOBN50jsqhnqAzDq0GiOI0u6oC5fHitzI2"
+      crossorigin="anonymous"
+    ></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <script src="script.js" defer></script>
-    <link rel="stylesheet" id="stylesheet" href="style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-</head>
-<body>
+    <link rel="stylesheet" id="stylesheet" href="style.css" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+  </head>
+  <body>
     <header role="banner">
-        <button class="icon-button" id="help-btn">?</button>
-        <h1>TURTLE</h1>
-        <button class="icon-button" id="stats-btn">📊</button>
+      <button class="icon-button" id="help-btn">?</button>
+      <h1>TURTLE</h1>
+      <button class="icon-button" id="stats-btn">📊</button>
     </header>
 
     <div class="select-wrapper">
-        <label for="language-select" class="select-label">Select Language</label>
-        <select id="language-select">
-            <option value="" disabled selected>Select Language</option>
-            <option value="afrikaans">Afrikaans</option>
-            <option value="dutch">Dutch</option>
-            <option value="english">English</option>
-            <option value="french">French</option>
-            <option value="german">German</option>
-            <option value="italian">Italian</option>
-            <option value="polish">Polish</option>
-            <option value="portuguese">Portuguese</option>
-            <option value="spanish">Spanish</option>
-            <option value="swahili">Swahili</option>
-            <option value="turkish">Turkish</option>
-            <option value="vietnamese">Vietnamese</option>
-            <option value="xhosa">Xhosa</option>
-            <option value="zulu">Zulu</option>
-        </select>
+      <label for="language-select" class="select-label">Select Language</label>
+      <select id="language-select">
+        <option value="" disabled selected>Select Language</option>
+        <option value="afrikaans">Afrikaans</option>
+        <option value="dutch">Dutch</option>
+        <option value="english">English</option>
+        <option value="french">French</option>
+        <option value="german">German</option>
+        <option value="italian">Italian</option>
+        <option value="polish">Polish</option>
+        <option value="portuguese">Portuguese</option>
+        <option value="spanish">Spanish</option>
+        <option value="swahili">Swahili</option>
+        <option value="turkish">Turkish</option>
+        <option value="vietnamese">Vietnamese</option>
+        <option value="xhosa">Xhosa</option>
+        <option value="zulu">Zulu</option>
+      </select>
     </div>
 
     <main role="main">
-        <div id="game-board" tabindex="0" role="grid" aria-label="Word guessing board"></div>
+      <div
+        id="game-board"
+        tabindex="0"
+        role="grid"
+        aria-label="Word guessing board"
+      ></div>
     </main>
 
     <div id="keyboard">
-        <div class="keyboard-row">
-            <button class="key" data-key="q">q</button>
-            <button class="key" data-key="w">w</button>
-            <button class="key" data-key="e">e</button>
-            <button class="key" data-key="r">r</button>
-            <button class="key" data-key="t">t</button>
-            <button class="key" data-key="y">y</button>
-            <button class="key" data-key="u">u</button>
-            <button class="key" data-key="i">i</button>
-            <button class="key" data-key="o">o</button>
-            <button class="key" data-key="p">p</button>
-        </div>
-        <div class="keyboard-row">
-            <button class="key" data-key="a">a</button>
-            <button class="key" data-key="s">s</button>
-            <button class="key" data-key="d">d</button>
-            <button class="key" data-key="f">f</button>
-            <button class="key" data-key="g">g</button>
-            <button class="key" data-key="h">h</button>
-            <button class="key" data-key="j">j</button>
-            <button class="key" data-key="k">k</button>
-            <button class="key" data-key="l">l</button>
-        </div>
-        <div class="keyboard-row">
-            <button class="key wide" data-key="backspace">⌫</button>
-            <button class="key" data-key="z">z</button>
-            <button class="key" data-key="x">x</button>
-            <button class="key" data-key="c">c</button>
-            <button class="key" data-key="v">v</button>
-            <button class="key" data-key="b">b</button>
-            <button class="key" data-key="n">n</button>
-            <button class="key" data-key="m">m</button>
-            <button class="key wide" data-key="enter">enter</button>
-        </div>
+      <div class="keyboard-row">
+        <button class="key" data-key="q">q</button>
+        <button class="key" data-key="w">w</button>
+        <button class="key" data-key="e">e</button>
+        <button class="key" data-key="r">r</button>
+        <button class="key" data-key="t">t</button>
+        <button class="key" data-key="y">y</button>
+        <button class="key" data-key="u">u</button>
+        <button class="key" data-key="i">i</button>
+        <button class="key" data-key="o">o</button>
+        <button class="key" data-key="p">p</button>
+      </div>
+      <div class="keyboard-row">
+        <button class="key" data-key="a">a</button>
+        <button class="key" data-key="s">s</button>
+        <button class="key" data-key="d">d</button>
+        <button class="key" data-key="f">f</button>
+        <button class="key" data-key="g">g</button>
+        <button class="key" data-key="h">h</button>
+        <button class="key" data-key="j">j</button>
+        <button class="key" data-key="k">k</button>
+        <button class="key" data-key="l">l</button>
+      </div>
+      <div class="keyboard-row">
+        <button class="key wide" data-key="backspace">⌫</button>
+        <button class="key" data-key="z">z</button>
+        <button class="key" data-key="x">x</button>
+        <button class="key" data-key="c">c</button>
+        <button class="key" data-key="v">v</button>
+        <button class="key" data-key="b">b</button>
+        <button class="key" data-key="n">n</button>
+        <button class="key" data-key="m">m</button>
+        <button class="key wide" data-key="enter">enter</button>
+      </div>
     </div>
 
     <div id="message-container"></div>
 
     <div class="modal" id="help-modal">
-        <div class="modal-content">
-            <h2>How to Play</h2>
-            <p>Guess the TURTLE in six tries.</p>
-            <p>After each guess, the color of the tiles will change to show how close your guess was to the word.</p>
-            <div style="margin: 20px 0; text-align: left;">
-                <p><strong>Examples:</strong></p>
-                <div style="display: flex; gap: 5px; margin: 10px 0;">
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #538d4e; border-color: #538d4e;">W</div>
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #3a3a3c; border-color: #3a3a3c;">E</div>
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #3a3a3c; border-color: #3a3a3c;">A</div>
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #3a3a3c; border-color: #3a3a3c;">R</div>
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #3a3a3c; border-color: #3a3a3c;">Y</div>
-                </div>
-                <p>The letter <strong>W</strong> is in the word and in the correct spot.</p>
-                <div style="display: flex; gap: 5px; margin: 10px 0;">
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #3a3a3c; border-color: #3a3a3c;">P</div>
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #b59f3b; border-color: #b59f3b;">I</div>
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #3a3a3c; border-color: #3a3a3c;">L</div>
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #3a3a3c; border-color: #3a3a3c;">O</div>
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #3a3a3c; border-color: #3a3a3c;">T</div>
-                </div>
-                <p>The letter <strong>I</strong> is in the word but in the wrong spot.</p>
-                <div style="display: flex; gap: 5px; margin: 10px 0;">
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #3a3a3c; border-color: #3a3a3c;">V</div>
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #3a3a3c; border-color: #3a3a3c;">A</div>
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #3a3a3c; border-color: #3a3a3c;">G</div>
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #3a3a3c; border-color: #3a3a3c;">U</div>
-                    <div class="tile" style="width: 40px; height: 40px; font-size: 20px; background-color: #3a3a3c; border-color: #3a3a3c;">E</div>
-                </div>
-                <p>The letter <strong>U</strong> is not in the word in any spot.</p>
-                <p>You are allowed <strong>one free game per day</strong>.</p>
-                <p>If you want to play more than your daily free game, a small payment is required via the <strong> Bitcoin Lightning Network</strong>.</p>
+      <div class="modal-content">
+        <h2>How to Play</h2>
+        <p>Guess the TURTLE in six tries.</p>
+        <p>
+          After each guess, the color of the tiles will change to show how close
+          your guess was to the word.
+        </p>
+        <div style="margin: 20px 0; text-align: left">
+          <p><strong>Examples:</strong></p>
+          <div style="display: flex; gap: 5px; margin: 10px 0">
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #538d4e;
+                border-color: #538d4e;
+              "
+            >
+              W
             </div>
-            <button onclick="closeModal('help-modal')">Got it!</button>
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #3a3a3c;
+                border-color: #3a3a3c;
+              "
+            >
+              E
+            </div>
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #3a3a3c;
+                border-color: #3a3a3c;
+              "
+            >
+              A
+            </div>
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #3a3a3c;
+                border-color: #3a3a3c;
+              "
+            >
+              R
+            </div>
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #3a3a3c;
+                border-color: #3a3a3c;
+              "
+            >
+              Y
+            </div>
+          </div>
+          <p>
+            The letter <strong>W</strong> is in the word and in the correct
+            spot.
+          </p>
+          <div style="display: flex; gap: 5px; margin: 10px 0">
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #3a3a3c;
+                border-color: #3a3a3c;
+              "
+            >
+              P
+            </div>
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #b59f3b;
+                border-color: #b59f3b;
+              "
+            >
+              I
+            </div>
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #3a3a3c;
+                border-color: #3a3a3c;
+              "
+            >
+              L
+            </div>
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #3a3a3c;
+                border-color: #3a3a3c;
+              "
+            >
+              O
+            </div>
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #3a3a3c;
+                border-color: #3a3a3c;
+              "
+            >
+              T
+            </div>
+          </div>
+          <p>
+            The letter <strong>I</strong> is in the word but in the wrong spot.
+          </p>
+          <div style="display: flex; gap: 5px; margin: 10px 0">
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #3a3a3c;
+                border-color: #3a3a3c;
+              "
+            >
+              V
+            </div>
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #3a3a3c;
+                border-color: #3a3a3c;
+              "
+            >
+              A
+            </div>
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #3a3a3c;
+                border-color: #3a3a3c;
+              "
+            >
+              G
+            </div>
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #3a3a3c;
+                border-color: #3a3a3c;
+              "
+            >
+              U
+            </div>
+            <div
+              class="tile"
+              style="
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                background-color: #3a3a3c;
+                border-color: #3a3a3c;
+              "
+            >
+              E
+            </div>
+          </div>
+          <p>The letter <strong>U</strong> is not in the word in any spot.</p>
+          <p>You are allowed <strong>one free game per day</strong>.</p>
+          <p>
+            If you want to play more than your daily free game, a small payment
+            is required via the <strong> Bitcoin Lightning Network</strong>.
+          </p>
         </div>
+        <button onclick="closeModal('help-modal')">Got it!</button>
+      </div>
     </div>
 
     <div class="modal" id="stats-modal">
-        <div class="modal-content">
-            <h2>Statistics</h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <span class="stat-number" id="played">0</span>
-                    <span class="stat-label">Played</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="win-rate">0</span>
-                    <span class="stat-label">Win %</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="current-streak">0</span>
-                    <span class="stat-label">Current Streak</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="max-streak">0</span>
-                    <span class="stat-label">Max Streak</span>
-                </div>
-            </div>
-            <div id="guess-distribution" style="margin: 20px 0;">
-                <h3 style="margin-bottom: 10px;">Guess Distribution</h3>
-                <div id="distribution-bars"></div>
-            </div>
-            <button id="tip-btn" style="display:none;">Buy me coffee!</button>
-            <button onclick="closeModal('stats-modal')">Close</button>
+      <div class="modal-content">
+        <h2>Statistics</h2>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number" id="played">0</span>
+            <span class="stat-label">Played</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="win-rate">0</span>
+            <span class="stat-label">Win %</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="current-streak">0</span>
+            <span class="stat-label">Current Streak</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="max-streak">0</span>
+            <span class="stat-label">Max Streak</span>
+          </div>
         </div>
+        <div id="guess-distribution" style="margin: 20px 0">
+          <h3 style="margin-bottom: 10px">Guess Distribution</h3>
+          <div id="distribution-bars"></div>
+        </div>
+        <button id="tip-btn" style="display: none">Buy me coffee!</button>
+        <button onclick="closeModal('stats-modal')">Close</button>
+      </div>
     </div>
 
     <div class="modal" id="game-over-modal">
-        <div class="modal-content">
-            <h2 id="game-over-title"></h2>
-            <p id="game-over-message"></p>
-            <div id="game-over-answer" style="margin: 20px 0;"></div>
-            <button onclick="resetGame()">Play Again</button>
-        </div>
+      <div class="modal-content">
+        <h2 id="game-over-title"></h2>
+        <p id="game-over-message"></p>
+        <div id="game-over-answer" style="margin: 20px 0"></div>
+        <button onclick="resetGame()">Play Again</button>
+      </div>
     </div>
 
     <div id="payment-qr-modal" class="modal">
-    <div class="modal-content">
+      <div class="modal-content">
         <h2>Pay with Bitcoin</h2>
-        <p id="qr-instruction">Scan this QR code with your Lightning wallet to pay.</p>
+        <p id="qr-instruction">
+          Scan this QR code with your Lightning wallet to pay.
+        </p>
         <canvas id="qr-code"></canvas>
-        <input type="text" id="invoice-text" style="position:absolute; left:-9999px;" readonly>
+        <input
+          type="text"
+          id="invoice-text"
+          style="position: absolute; left: -9999px"
+          readonly
+        />
         <button id="copy-invoice-btn">Copy Invoice</button>
         <p id="qr-status">Waiting for payment...</p>
+      </div>
     </div>
+
+    <div id="leaderboard-modal" class="modal">
+      <h2>Leaderboard</h2>
+      <div class="leaderboard-controls">
+        <label for="leaderboard-language">Language:</label>
+        <select id="leaderboard-language">
+          <option value="english">English</option>
+          <option value="afrikaans">Afrikaans</option>
+          <option value="dutch">Dutch</option>
+          <option value="french">French</option>
+          <option value="german">German</option>
+          <option value="italian">Italian</option>
+          <option value="polish">Polish</option>
+          <option value="portuguese">Portuguese</option>
+          <option value="spanish">Spanish</option>
+          <option value="swahili">Swahili</option>
+          <option value="turkish">Turkish</option>
+          <option value="vietnamese">Vietnamese</option>
+          <option value="xhosa">Xhosa</option>
+          <option value="zulu">Zulu</option>
+        </select>
+      </div>
+      <ul id="leaderboard-list"></ul>
+      <button onclick="closeModal('leaderboard-modal')">Close</button>
     </div>
+  </body>
+</html>

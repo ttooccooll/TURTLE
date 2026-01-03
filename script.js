@@ -587,37 +587,47 @@ function loadStats() {
 }
 
 async function submitLeaderboardScore(guesses) {
-    try {
-        await fetch('https://turtle-leaderboard.jasonbohio.workers.dev/leaderboard/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                language: currentLanguage,
-                guesses
-            })
-        });
-    } catch (err) {
-        console.warn('Leaderboard submit failed', err);
-    }
+  try {
+    await fetch(
+      "https://turtle-leaderboard.jasonbohio.workers.dev/leaderboard/submit",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          language: currentLanguage,
+          guesses,
+        }),
+      }
+    );
+  } catch (err) {
+    console.warn("Leaderboard submit failed", err);
+  }
 }
 
 async function loadLeaderboard() {
+  try {
     const resp = await fetch(
-        `https://turtle-leaderboard.jasonbohio.workers.dev/leaderboard/top?language=${currentLanguage}`
+      `https://turtle-leaderboard.jasonbohio.workers.dev/leaderboard/top?language=${currentLanguage}`
     );
+
+    if (!resp.ok) throw new Error("Failed to load leaderboard");
 
     const data = await resp.json();
 
-    const list = document.getElementById('leaderboard-list');
-    list.innerHTML = '';
+    const list = document.getElementById("leaderboard-list");
+    list.innerHTML = "";
 
     data.forEach((row, i) => {
-        const li = document.createElement('li');
-        li.textContent = `#${i + 1} – ${row.guesses} guesses`;
-        list.appendChild(li);
+      const li = document.createElement("li");
+      li.textContent = `#${i + 1} – ${row.guesses} guesses`;
+      list.appendChild(li);
     });
 
-    showModal('leaderboard-modal');
+    showModal("leaderboard-modal");
+  } catch (err) {
+    showError("Could not load leaderboard");
+    console.error(err);
+  }
 }
 
 function updateStats(won, guessNumber) {
@@ -718,6 +728,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadWordList(currentLanguage);
   setupKeyboard();
   loadStats();
+  document
+    .getElementById("leaderboard-btn")
+    .addEventListener("click", loadLeaderboard);
   document
     .getElementById("help-btn")
     .addEventListener("click", () => showModal("help-modal"));
