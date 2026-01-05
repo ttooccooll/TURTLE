@@ -566,42 +566,68 @@ function showGameOver(won) {
   showModal("game-over-modal");
 }
 
-function loadStats() {
-  const stats = JSON.parse(
-    localStorage.getItem(fetch(`https://turtle-backend.jasonbohio.workers.dev/api/leaderboard`))
-  ) || {
+async function loadStats() {
+  let stats = {
     played: 0,
     won: 0,
     currentStreak: 0,
     maxStreak: 0,
-    guessDistribution: [0, 0, 0, 0, 0, 0],
   };
+
+  const userId = localStorage.getItem("turtleUserId");
+  if (userId) {
+    try {
+      const resp = await fetch(`https://turtle-backend.jasonbohio.workers.dev/api/user/${userId}`);
+      if (resp.ok) {
+        stats = await resp.json();
+      }
+    } catch (err) {
+      console.warn("Could not fetch stats, falling back to localStorage:", err);
+      const localStats = localStorage.getItem("turtleStats");
+      if (localStats) stats = JSON.parse(localStats);
+    }
+  }
+
   document.getElementById("played").textContent = stats.played;
-  document.getElementById("win-rate").textContent = stats.played
-    ? Math.round((stats.won / stats.played) * 100)
-    : 0;
+  document.getElementById("win-rate").textContent = stats.played ? Math.round((stats.won / stats.played) * 100) : 0;
   document.getElementById("current-streak").textContent = stats.currentStreak;
   document.getElementById("max-streak").textContent = stats.maxStreak;
 }
 
-function updateStats(won, guessNumber) {
-  const stats = JSON.parse(localStorage.getItem(`https://turtle-backend.jasonbohio.workers.dev/api/auth`)) || {
-    played: 0,
-    won: 0,
-    currentStreak: 0,
-    maxStreak: 0,
-    guessDistribution: [0, 0, 0, 0, 0, 0],
+
+async function updateStats(won, guessNumber) {
+  const userId = localStorage.getItem("turtleUserId");
+  if (!userId) return;
+
+  const body = { won, guessNumber };
+
+  try {
+    await fetch(`https://turtle-backend.jasonbohio.workers.dev/api/update-stats`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, ...body }),
+    });
+  } catch (err) {
+    console.error("Failed to update stats on backend:", err);
+  }
+
+  // fallback to localStorage
+  const statsKey = "turtleStats";
+  const stats = JSON.parse(localStorage.getItem(statsKey)) || {
+    played: 0, won: 0, currentStreak: 0, maxStreak: 0
   };
+
   stats.played++;
   if (won) {
     stats.won++;
     stats.currentStreak++;
     stats.maxStreak = Math.max(stats.maxStreak, stats.currentStreak);
-    stats.guessDistribution[guessNumber - 1]++;
   } else {
     stats.currentStreak = 0;
   }
-  localStorage.setItem(`https://turtle-backend.jasonbohio.workers.dev/api/auth`, JSON.stringify(stats));
+
+  localStorage.setItem(statsKey, JSON.stringify(stats));
+
   loadStats();
 }
 
@@ -636,19 +662,23 @@ async function ensureUserSignedIn() {
 }
 
 async function renderLeaderboard() {
-  const resp = await fetch(`https://turtle-backend.jasonbohio.workers.dev/api/leaderboard`);
-  const data = await resp.json();
+  try {
+    const resp = await fetch(`https://turtle-backend.jasonbohio.workers.dev/api/leaderboard`);
+    if (!resp.ok) throw new Error("Leaderboard fetch failed");
 
-  const el = document.getElementById("leaderboard");
-  el.innerHTML = "";
+    const data = await resp.json();
 
-  data.forEach((u, i) => {
-    const row = document.createElement("div");
-    row.textContent = `#${i + 1} ${u.username} — ${
-      u.win_rate
-    }% win rate — max streak ${u.max_streak}`;
-    el.appendChild(row);
-  });
+    const el = document.getElementById("leaderboard");
+    el.innerHTML = "";
+
+    data.forEach((u, i) => {
+      const row = document.createElement("div");
+      row.textContent = `#${i + 1} ${u.username} — ${u.win_rate}% win rate — max streak ${u.max_streak}`;
+      el.appendChild(row);
+    });
+  } catch (err) {
+    console.error("Failed to render leaderboard:", err);
+  }
 }
 
 document.addEventListener(
