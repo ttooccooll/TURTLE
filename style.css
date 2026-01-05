@@ -440,6 +440,14 @@ main {
   font-weight: bold;
 }
 
+#username-input {
+    margin: 5px
+}
+
+#leaderboard {
+    top-margin: 5px  
+}
+
 @keyframes tipPulse {
   0% {
     transform: scale(1);
