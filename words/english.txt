@@ -3490,8 +3490,6 @@ greek
 xenon
 pique
 roger
-negro
-hadst
 gecko
 beget
 uncut
@@ -3537,9 +3535,6 @@ breve
 theta
 deems
 dykes
-servo
-telly
-tabby
 tares
 blocs
 welch
