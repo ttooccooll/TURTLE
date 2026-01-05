@@ -419,10 +419,8 @@ main {
 }
 
 .leaderboard-row.current-player {
-  background-color: #fffae6; /* light yellow */
+  color: rgba(255, 170, 50, 0.9);
   font-weight: bold;
-  border-radius: 4px;
-  padding: 4px;
 }
 
 @keyframes tipPulse {
