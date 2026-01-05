@@ -1148,7 +1148,6 @@ cloak
 onion
 clams
 scrap
-didst
 couch
 codes
 fails
@@ -3527,8 +3526,6 @@ soupy
 roper
 swath
 cameo
-edger
-spate
 gimme
 ebbed
 breve
@@ -3552,19 +3549,14 @@ privy
 mammy
 deary
 gyros
-sprit
 conga
-quire
 thugs
-furor
-bloke
 runes
 bawdy
 cadre
 toxin
 annul
 egged
-anion
 nodes
 picky
 stein
