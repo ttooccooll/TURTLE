@@ -572,8 +572,8 @@ async function loadStats() {
   let stats = {
     played: 0,
     won: 0,
-    currentStreak: 0,
-    maxStreak: 0,
+    current_streak: 0,
+    max_streak: 0,
   };
 
   const userId = localStorage.getItem("turtleUserId");
@@ -596,8 +596,8 @@ async function loadStats() {
   document.getElementById("win-rate").textContent = stats.played
     ? Math.round((stats.won / stats.played) * 100)
     : 0;
-  document.getElementById("current-streak").textContent = stats.currentStreak;
-  document.getElementById("max-streak").textContent = stats.maxStreak;
+  document.getElementById("current-streak").textContent = stats.current_streak;
+  document.getElementById("max-streak").textContent = stats.max_streak;
 }
 
 async function updateStats(won, guessNumber) {
@@ -624,17 +624,17 @@ async function updateStats(won, guessNumber) {
   const stats = JSON.parse(localStorage.getItem(statsKey)) || {
     played: 0,
     won: 0,
-    currentStreak: 0,
-    maxStreak: 0,
+    current_streak: 0,
+    max_streak: 0,
   };
 
   stats.played++;
   if (won) {
     stats.won++;
-    stats.currentStreak++;
-    stats.maxStreak = Math.max(stats.maxStreak, stats.currentStreak);
+    stats.current_streak++;
+    stats.max_streak = Math.max(stats.max_streak, stats.current_streak);
   } else {
-    stats.currentStreak = 0;
+    stats.current_streak = 0;
   }
 
   localStorage.setItem(statsKey, JSON.stringify(stats));
