@@ -722,7 +722,13 @@ async function renderLeaderboard() {
         row.classList.add("current-player");
       }
 
-      row.textContent = `${i + 1} ${u.username} — Games Won: ${u.won}, Win Rate: ${u.win_rate}%, Longest Streak: ${u.max_streak}`;
+      row.innerHTML = `
+  <div class="leaderboard-rank">${i + 1}</div>
+  <div class="leaderboard-name">${u.username}</div>
+  <div class="leaderboard-stats">
+    🏆 ${u.won} · ${u.win_rate}% · 🔥 ${u.max_streak}
+  </div>
+`;
       el.appendChild(row);
     });
   } catch (err) {

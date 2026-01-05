@@ -428,7 +428,7 @@ main {
   animation: tipPulse 2s infinite ease-in-out;
   font-weight: bold;
   box-shadow: 0 0 12px rgba(255, 170, 50, 0.6);
-  margin: 5px
+  margin: 5px;
 }
 
 #tip-btn:hover {
@@ -442,11 +442,69 @@ main {
 }
 
 #username-input {
-    margin: 5px
+  margin: 5px;
 }
 
 #leaderboard {
-    margin-top: 5px  
+  margin-top: 5px;
+}
+
+/* Leaderboard container */
+.leaderboard {
+  width: 100%;
+  margin-top: 10px;
+  border-top: 1px solid #3a3a3c;
+  padding-top: 8px;
+  font-size: 14px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+/* Header */
+.leaderboard h3 {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+}
+
+/* Rows */
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 4px;
+  border-bottom: 1px solid #2a2a2c;
+}
+
+/* Rank number */
+.leaderboard-rank {
+  color: #818384;
+  font-weight: bold;
+  text-align: right;
+}
+
+/* Username */
+.leaderboard-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Stats */
+.leaderboard-stats {
+  color: #818384;
+  font-size: 12px;
+  text-align: right;
+}
+
+/* Highlight current player */
+.leaderboard-row.current-player {
+  background-color: rgba(255, 170, 50, 0.08);
+  border-radius: 4px;
+  color: rgba(255, 170, 50, 0.95);
+  font-weight: bold;
 }
 
 @keyframes tipPulse {
