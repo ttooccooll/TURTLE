@@ -482,7 +482,7 @@ main {
 .leaderboard-rank {
   color: #818384;
   font-weight: bold;
-  text-align: right;
+  text-align: left;
 }
 
 /* Username */
@@ -519,14 +519,12 @@ main {
   border-bottom: 1px solid #3a3a3c;
 }
 
-.leaderboard-stats,
 .leaderboard-stats-header {
-  width: 130px;
   text-align: right;
 }
 
 .leaderboard-stats {
-  font-variant-numeric: tabular-nums;
+    text-align: center;
 }
 
 @keyframes tipPulse {
