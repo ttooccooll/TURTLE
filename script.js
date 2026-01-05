@@ -758,7 +758,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     .addEventListener("click", () => showModal("help-modal"));
   document
     .getElementById("stats-btn")
-    .addEventListener("click", () => showModal("stats-modal"));
+    .addEventListener("click", openStatsModal);
   document
     .getElementById("username-btn")
     .addEventListener("click", () => showModal("username-modal"));
