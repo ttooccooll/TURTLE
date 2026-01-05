@@ -3142,7 +3142,6 @@ malls
 parch
 avers
 crams
-pares
 dally
 bigot
 kales
@@ -3151,7 +3150,6 @@ leach
 gushy
 pooch
 huger
-slyer
 golfs
 mires
 flues
