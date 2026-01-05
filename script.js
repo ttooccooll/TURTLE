@@ -11,7 +11,7 @@ let activeTimeouts = [];
 let isFocusSet = false;
 let currentLanguage = "english";
 
-const API = "https://turtle-backend.YOURNAME.workers.dev";
+const API = "https://turtle-backend.jasonbohio.workers.dev/";
 
 const gameBoard = document.getElementById("game-board");
 const messageContainer = document.getElementById("message-container");
