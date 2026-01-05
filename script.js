@@ -691,12 +691,17 @@ async function renderLeaderboard() {
     data.forEach((u, i) => {
       const row = document.createElement("div");
       row.className = "leaderboard-row";
-      row.textContent = `#${i + 1} ${u.username} — Played: ${u.played}, Won: ${u.won}, Current Streak: ${u.current_streak}, Max Streak: ${u.max_streak}, Win Rate: ${u.win_rate}%`;
+      row.textContent = `#${i + 1} ${u.username} — Played: ${u.played}, Won: ${
+        u.won
+      }, Current Streak: ${u.current_streak}, Max Streak: ${
+        u.max_streak
+      }, Win Rate: ${u.win_rate}%`;
       el.appendChild(row);
     });
   } catch (err) {
     console.error("Failed to render leaderboard:", err);
-    document.getElementById("leaderboard").textContent = "Error loading leaderboard.";
+    document.getElementById("leaderboard").textContent =
+      "Error loading leaderboard.";
   }
 }
 
@@ -750,9 +755,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   document
     .getElementById("help-btn")
     .addEventListener("click", () => showModal("help-modal"));
-  document
-    .getElementById("stats-btn")
-    .addEventListener("click", () => showModal("stats-modal"));
+  document.getElementById("stats-btn").addEventListener("click", async () => {
+    showModal("stats-modal");
+    await loadStats(); // update stats
+    await renderLeaderboard(); // populate leaderboard
+  });
   document
     .getElementById("username-btn")
     .addEventListener("click", () => showModal("username-modal"));
