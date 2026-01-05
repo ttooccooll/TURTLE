@@ -649,38 +649,32 @@ function setupKeyboard() {
   });
 }
 
-async function ensureUserSignedIn() {
-  if (localStorage.getItem("turtleUserId")) return;
+document.getElementById("username-submit").onclick = async () => {
+  const username = document.getElementById("username-input").value.trim();
+  if (!username) return;
 
-  showModal("username-modal");
+  try {
+    const resp = await fetch(
+      `https://turtle-backend.jasonbohio.workers.dev/api/auth`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username }),
+      }
+    );
 
-  document.getElementById("username-submit").onclick = async () => {
-    const username = document.getElementById("username-input").value.trim();
-    if (!username) return;
+    const data = await resp.json();
+    localStorage.setItem("turtleUserId", data.userId);
+    localStorage.setItem("turtleUsername", data.username);
 
-    try {
-      const resp = await fetch(
-        `https://turtle-backend.jasonbohio.workers.dev/api/auth`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username }),
-        }
-      );
+    showMessage(`Welcome, ${data.username}!`);
+  } catch (err) {
+    console.error("Failed to save username:", err);
+    showError("Could not save username. Try again.");
+  }
 
-      const data = await resp.json();
-      localStorage.setItem("turtleUserId", data.userId);
-      localStorage.setItem("turtleUsername", data.username);
-
-      showMessage(`Welcome, ${data.username}!`);
-    } catch (err) {
-      console.error("Failed to save username:", err);
-      showError("Could not save username. Try again.");
-    }
-
-    closeModal("username-modal");
-  };
-}
+  closeModal("username-modal");
+};
 
 async function renderLeaderboard() {
   try {
