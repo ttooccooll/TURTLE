@@ -691,7 +691,7 @@ async function renderLeaderboard() {
   el.innerHTML = "<h3>Leaderboard</h3>"; // optional header
   el.innerHTML += `
   <div class="leaderboard-header">
-    <div>  #</div>
+    <div>#</div>
     <div>Player</div>
     <div class="leaderboard-stats-header">
       🏆 Won · Win% · 🔥 Streak
@@ -732,8 +732,8 @@ async function renderLeaderboard() {
       }
 
       row.innerHTML = `
-  <div class="leaderboard-rank">${i + 1}</div>
-  <div class="leaderboard-name">${u.username}</div>
+  <div class="leaderboard-rank">  ${i + 1}</div>
+  <div class="leaderboard-name">  ${u.username}</div>
   <div class="leaderboard-stats">
     ${u.won} wins  ·  ${u.win_rate}%  ·  ${u.max_streak} in a row
   </div>
