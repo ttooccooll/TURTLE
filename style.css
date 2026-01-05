@@ -20,8 +20,9 @@ body {
 }
 
 header {
+  position: relative;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 100%;
   max-width: 500px;
@@ -29,10 +30,26 @@ header {
   border-bottom: 1px solid #3a3a3c;
 }
 
-h1 {
+header h1 {
+  margin: 0 auto;
   font-size: 32px;
   font-weight: 700;
   letter-spacing: 0.05em;
+}
+
+#username-btn {
+  position: absolute;
+  left: 0;
+}
+
+#help-btn {
+  position: absolute;
+  right: 0;
+}
+
+#stats-btn {
+  position: absolute;
+  right: 40px;
 }
 
 .icon-button {
@@ -41,7 +58,7 @@ h1 {
   color: #d7dadc;
   cursor: pointer;
   padding: 8px;
-  font-size: 24px;
+  font-size: 16px;
   transition: transform 0.2s;
 }
 
