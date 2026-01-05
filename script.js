@@ -722,9 +722,7 @@ async function renderLeaderboard() {
         row.classList.add("current-player");
       }
 
-      row.textContent = `#${i + 1} ${u.username} — Win Rate: ${
-        u.win_rate
-      }%, Max Streak: ${u.max_streak}`;
+      row.textContent = `${i + 1} ${u.username} — Win Rate: ${u.win_rate}%, Max Streak: ${u.max_streak}`;
       el.appendChild(row);
     });
   } catch (err) {
