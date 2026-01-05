@@ -677,31 +677,39 @@ document.getElementById("username-submit").onclick = async () => {
 };
 
 async function renderLeaderboard() {
+  const el = document.getElementById("leaderboard");
+  el.innerHTML = "<h3>Leaderboard</h3>"; // optional header
+
   try {
     const resp = await fetch(
       `https://turtle-backend.jasonbohio.workers.dev/api/leaderboard`
     );
+
     if (!resp.ok) throw new Error("Leaderboard fetch failed");
 
-    const data = await resp.json();
+    let data = await resp.json();
 
-    const el = document.getElementById("leaderboard");
-    el.innerHTML = "<h3>Leaderboard</h3>"; // optional header
+    if (!data || data.length === 0) {
+      el.innerHTML += "<p>No players yet. Play some games to appear here!</p>";
+      return;
+    }
 
+    // Sort by win_rate descending, then by played descending as tie-breaker
+    data.sort((a, b) => {
+      if (b.win_rate !== a.win_rate) return b.win_rate - a.win_rate;
+      return b.played - a.played;
+    });
+
+    // Render each player
     data.forEach((u, i) => {
       const row = document.createElement("div");
       row.className = "leaderboard-row";
-      row.textContent = `#${i + 1} ${u.username} — Played: ${u.played}, Won: ${
-        u.won
-      }, Current Streak: ${u.current_streak}, Max Streak: ${
-        u.max_streak
-      }, Win Rate: ${u.win_rate}%`;
+      row.textContent = `#${i + 1} ${u.username} — Played: ${u.played}, Won: ${u.won}, Current Streak: ${u.current_streak}, Max Streak: ${u.max_streak}, Win Rate: ${u.win_rate}%`;
       el.appendChild(row);
     });
   } catch (err) {
     console.error("Failed to render leaderboard:", err);
-    document.getElementById("leaderboard").textContent =
-      "Error loading leaderboard.";
+    el.innerHTML += "<p>Error loading leaderboard. Try again later.</p>";
   }
 }
 
