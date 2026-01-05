@@ -11,8 +11,6 @@ let activeTimeouts = [];
 let isFocusSet = false;
 let currentLanguage = "english";
 
-const API = "https://turtle-backend.jasonbohio.workers.dev/";
-
 const gameBoard = document.getElementById("game-board");
 const messageContainer = document.getElementById("message-container");
 const keyboard = document.getElementById("keyboard");
@@ -588,7 +586,7 @@ function loadStats() {
 }
 
 function updateStats(won, guessNumber) {
-  const stats = JSON.parse(localStorage.getItem(`${API}/api/auth`)) || {
+  const stats = JSON.parse(localStorage.getItem(`https://turtle-backend.jasonbohio.workers.dev/api/auth`)) || {
     played: 0,
     won: 0,
     currentStreak: 0,
@@ -604,7 +602,7 @@ function updateStats(won, guessNumber) {
   } else {
     stats.currentStreak = 0;
   }
-  localStorage.setItem(`${API}/api/auth`, JSON.stringify(stats));
+  localStorage.setItem(`https://turtle-backend.jasonbohio.workers.dev/api/auth`, JSON.stringify(stats));
   loadStats();
 }
 
@@ -657,7 +655,7 @@ async function ensureUserSignedIn() {
     const username = document.getElementById("username-input").value.trim();
     if (!username) return;
 
-    const resp = await fetch(`${API}/api/auth`, {
+    const resp = await fetch(`https://turtle-backend.jasonbohio.workers.dev/api/auth`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username }),
@@ -672,7 +670,7 @@ async function ensureUserSignedIn() {
 }
 
 async function renderLeaderboard() {
-  const resp = await fetch(`${API}/api/leaderboard`);
+  const resp = await fetch(`https://turtle-backend.jasonbohio.workers.dev/api/leaderboard`);
   const data = await resp.json();
 
   const el = document.getElementById("leaderboard");
