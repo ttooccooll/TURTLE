@@ -658,18 +658,25 @@ async function ensureUserSignedIn() {
     const username = document.getElementById("username-input").value.trim();
     if (!username) return;
 
-    const resp = await fetch(
-      `https://turtle-backend.jasonbohio.workers.dev/api/auth`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username }),
-      }
-    );
+    try {
+      const resp = await fetch(
+        `https://turtle-backend.jasonbohio.workers.dev/api/auth`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username }),
+        }
+      );
 
-    const data = await resp.json();
-    localStorage.setItem("turtleUserId", data.userId);
-    localStorage.setItem("turtleUsername", data.username);
+      const data = await resp.json();
+      localStorage.setItem("turtleUserId", data.userId);
+      localStorage.setItem("turtleUsername", data.username);
+
+      showMessage(`Welcome, ${data.username}!`);
+    } catch (err) {
+      console.error("Failed to save username:", err);
+      showError("Could not save username. Try again.");
+    }
 
     closeModal("username-modal");
   };
@@ -739,7 +746,6 @@ document.addEventListener("keydown", (e) => {
   else if (/^[a-zA-Z]$/.test(e.key)) handleKeyPress(e.key.toLowerCase());
 });
 
-
 document.addEventListener("DOMContentLoaded", async () => {
   const savedLang = localStorage.getItem("turtleLang") || "english";
   currentLanguage = savedLang;
@@ -756,7 +762,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document
     .getElementById("stats-btn")
     .addEventListener("click", () => showModal("stats-modal"));
-      document
+  document
     .getElementById("username-btn")
     .addEventListener("click", () => showModal("username-modal"));
   startNewGame();
