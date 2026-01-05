@@ -654,32 +654,37 @@ async function ensureUserSignedIn() {
 
   showModal("username-modal");
 
-  document.getElementById("username-submit").onclick = async () => {
-    const username = document.getElementById("username-input").value.trim();
-    if (!username) return;
+  document
+    .getElementById("username-submit")
+    .addEventListener("click", async () => {
+      const username = document.getElementById("username-input").value.trim();
+      if (!username) {
+        showMessage("Please enter a username");
+        return;
+      }
 
-    try {
-      const resp = await fetch(
-        `https://turtle-backend.jasonbohio.workers.dev/api/auth`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username }),
-        }
-      );
+      try {
+        const resp = await fetch(
+          `https://turtle-backend.jasonbohio.workers.dev/api/auth`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username }),
+          }
+        );
 
-      const data = await resp.json();
-      localStorage.setItem("turtleUserId", data.userId);
-      localStorage.setItem("turtleUsername", data.username);
+        const data = await resp.json();
+        localStorage.setItem("turtleUserId", data.userId);
+        localStorage.setItem("turtleUsername", data.username);
 
-      showMessage(`Welcome, ${data.username}!`);
-    } catch (err) {
-      console.error("Failed to save username:", err);
-      showError("Could not save username. Try again.");
-    }
+        showMessage(`Welcome, ${data.username}!`);
+      } catch (err) {
+        console.error("Failed to save username:", err);
+        showError("Could not save username. Try again.");
+      }
 
-    closeModal("username-modal");
-  };
+      closeModal("username-modal");
+    });
 }
 
 async function renderLeaderboard() {
@@ -762,9 +767,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   document
     .getElementById("stats-btn")
     .addEventListener("click", () => showModal("stats-modal"));
-  document
-    .getElementById("username-btn")
-    .addEventListener("click", () => showModal("username-modal"));
   startNewGame();
 });
 
