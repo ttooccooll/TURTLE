@@ -144,6 +144,7 @@ async function startNewGame() {
   closeModal("game-over-modal");
   closeModal("help-modal");
   closeModal("stats-modal");
+  closeModal("username-modal");
 }
 
 async function generateInvoiceForBlink(amountSats) {
@@ -529,6 +530,7 @@ async function reloadGameForLanguageChange() {
   closeModal("game-over-modal");
   closeModal("help-modal");
   closeModal("stats-modal");
+  closeModal("username-modal");
 
   showMessage("Language changed — new word loaded!");
 }
@@ -743,6 +745,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   document
     .getElementById("stats-btn")
     .addEventListener("click", () => showModal("stats-modal"));
+      document
+    .getElementById("username-btn")
+    .addEventListener("click", () => showModal("username-modal"));
   startNewGame();
 });
 
