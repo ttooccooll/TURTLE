@@ -699,29 +699,22 @@ async function renderLeaderboard() {
   }
 }
 
-document.addEventListener(
-  "keydown",
-  (e) => {
-    if (e.key !== "Enter") return;
+document.addEventListener("keydown", (e) => {
+  // Ignore key presses if typing in an input or textarea
+  const activeEl = document.activeElement;
+  if (
+    activeEl.tagName === "INPUT" ||
+    activeEl.tagName === "TEXTAREA" ||
+    activeEl.isContentEditable
+  ) {
+    return; // don't trigger game input
+  }
 
-    const openModal = document.querySelector(".modal.show");
-    if (openModal) {
-      if (openModal.id === "payment-qr-modal") {
-        e.preventDefault();
-        e.stopPropagation();
-        return;
-      }
-      e.preventDefault();
-      e.stopPropagation();
-      if (openModal.id === "game-over-modal") {
-        resetGame();
-        return;
-      }
-      openModal.classList.remove("show");
-    }
-  },
-  true
-);
+  if (e.key === "Enter") handleKeyPress("enter");
+  else if (e.key === "Backspace") handleKeyPress("backspace");
+  else if (/^[a-zA-Z]$/.test(e.key)) handleKeyPress(e.key.toLowerCase());
+});
+
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "Enter") handleKeyPress("enter");
