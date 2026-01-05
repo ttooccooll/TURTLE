@@ -691,7 +691,7 @@ async function renderLeaderboard() {
   el.innerHTML = "<h3>Leaderboard</h3>"; // optional header
   el.innerHTML += `
   <div class="leaderboard-header">
-    <div>#</div>
+    <div>  #</div>
     <div>Player</div>
     <div class="leaderboard-stats-header">
       🏆 Won · Win% · 🔥 Streak
