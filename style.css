@@ -500,6 +500,10 @@ main {
   text-align: right;
 }
 
+.leaderboard-stats::before {
+  content: "";
+}
+
 /* Highlight current player */
 .leaderboard-row.current-player {
   background-color: rgba(255, 170, 50, 0.08);

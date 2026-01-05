@@ -735,7 +735,7 @@ async function renderLeaderboard() {
   <div class="leaderboard-rank">${i + 1}</div>
   <div class="leaderboard-name">${u.username}</div>
   <div class="leaderboard-stats">
-    ${u.won} · ${u.win_rate}% · ${u.max_streak}
+    ${u.won}  ·  ${u.win_rate}%  ·  ${u.max_streak}
   </div>
 `;
 
