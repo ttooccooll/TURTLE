@@ -568,7 +568,7 @@ function showGameOver(won) {
 
 function loadStats() {
   const stats = JSON.parse(
-    localStorage.getItem(fetch(`${API}/api/leaderboard`))
+    localStorage.getItem(fetch(`https://turtle-backend.jasonbohio.workers.dev/api/leaderboard`))
   ) || {
     played: 0,
     won: 0,
