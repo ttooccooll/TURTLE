@@ -704,10 +704,10 @@ async function renderLeaderboard() {
       return;
     }
 
-    // Sort by win_rate descending, then by played descending as tie-breaker
+    // Sort by games won descending
     data.sort((a, b) => {
-      if (b.win_rate !== a.win_rate) return b.win_rate - a.win_rate;
-      return b.played - a.played;
+      if (b.won !== a.won) return b.won - a.won;
+      return b.win_rate - a.win_rate;
     });
 
     const currentUser = localStorage.getItem("turtleUsername");
@@ -722,7 +722,7 @@ async function renderLeaderboard() {
         row.classList.add("current-player");
       }
 
-      row.textContent = `${i + 1} ${u.username} — Win Rate: ${u.win_rate}%, Max Streak: ${u.max_streak}`;
+      row.textContent = `${i + 1} ${u.username} — Games Won: ${u.won}, Win Rate: ${u.win_rate}%, Max Streak: ${u.max_streak}`;
       el.appendChild(row);
     });
   } catch (err) {
