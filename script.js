@@ -700,6 +700,12 @@ async function renderLeaderboard() {
   }
 }
 
+async function openStatsModal(userId) {
+  document.getElementById("stats-modal").style.display = "block";
+  await loadStats(userId);
+  await renderLeaderboard();
+}
+
 document.addEventListener("keydown", (e) => {
   const activeEl = document.activeElement;
   const openModal = document.querySelector(".modal.show");
