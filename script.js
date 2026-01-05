@@ -16,10 +16,20 @@ const messageContainer = document.getElementById("message-container");
 const keyboard = document.getElementById("keyboard");
 
 function handleFirstKeypress(e) {
+  const activeEl = document.activeElement;
+  const openModal = document.querySelector(".modal.show");
+
+  // Don't steal focus if typing in a modal input
+  if (
+    (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA") &&
+    openModal
+  ) {
+    return; // let modal handle it
+  }
+
   if (/^[a-zA-Z]$/.test(e.key) || e.key === "Enter" || e.key === "Backspace") {
     gameBoard.focus();
     isFocusSet = true;
-
     document.removeEventListener("keydown", handleFirstKeypress);
   }
 }
@@ -712,7 +722,9 @@ async function renderLeaderboard() {
         row.classList.add("current-player");
       }
 
-      row.textContent = `#${i + 1} ${u.username} — Win Rate: ${u.win_rate}%, Max Streak: ${u.max_streak}`;
+      row.textContent = `#${i + 1} ${u.username} — Win Rate: ${
+        u.win_rate
+      }%, Max Streak: ${u.max_streak}`;
       el.appendChild(row);
     });
   } catch (err) {
@@ -725,34 +737,30 @@ document.addEventListener("keydown", (e) => {
   const activeEl = document.activeElement;
   const openModal = document.querySelector(".modal.show");
 
-  // 1️⃣ If typing in an input/textarea, do nothing for game
+  // 1️⃣ Typing in input/textarea
   if (
     activeEl.tagName === "INPUT" ||
     activeEl.tagName === "TEXTAREA" ||
     activeEl.isContentEditable
   ) {
-    return;
+    // If username modal and Enter pressed, submit
+    if (openModal?.id === "username-modal" && e.key === "Enter") {
+      e.preventDefault();
+      document.getElementById("username-submit").click();
+    }
+    return; // ignore game input
   }
 
-  // 2️⃣ If a modal is open
+  // 2️⃣ If modal open
   if (openModal) {
     if (e.key === "Enter") {
       e.preventDefault();
-      e.stopPropagation();
-
       // handle modal-specific logic
       if (openModal.id === "game-over-modal") {
         resetGame();
-      } else if (openModal.id === "payment-qr-modal") {
-        // ignore enter while waiting for QR payment
-        return;
-      } else {
-        // generic close for other modals
-        closeModal(openModal.id);
       }
     }
-
-    return; // prevent any game input while a modal is open
+    return; // ignore game input
   }
 
   // 3️⃣ Game input
