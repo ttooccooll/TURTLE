@@ -686,17 +686,17 @@ async function renderLeaderboard() {
     const data = await resp.json();
 
     const el = document.getElementById("leaderboard");
-    el.innerHTML = "";
+    el.innerHTML = "<h3>Leaderboard</h3>"; // optional header
 
     data.forEach((u, i) => {
       const row = document.createElement("div");
-      row.textContent = `#${i + 1} ${u.username} — ${
-        u.win_rate
-      }% win rate — max streak ${u.max_streak}`;
+      row.className = "leaderboard-row";
+      row.textContent = `#${i + 1} ${u.username} — Played: ${u.played}, Won: ${u.won}, Current Streak: ${u.current_streak}, Max Streak: ${u.max_streak}, Win Rate: ${u.win_rate}%`;
       el.appendChild(row);
     });
   } catch (err) {
     console.error("Failed to render leaderboard:", err);
+    document.getElementById("leaderboard").textContent = "Error loading leaderboard.";
   }
 }
 
