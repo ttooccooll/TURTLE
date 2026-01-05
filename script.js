@@ -725,8 +725,9 @@ async function renderLeaderboard() {
       row.innerHTML = `
   <div class="leaderboard-rank">${i + 1}</div>
   <div class="leaderboard-name">${u.username}</div>
+  </br>
   <div class="leaderboard-stats">
-    🏆 ${u.won} · ${u.win_rate}% · 🔥 ${u.max_streak}
+    🏆 Games Won: ${u.won} - Win Rate: ${u.win_rate}% - Longest Streak ${u.max_streak}
   </div>
 `;
       el.appendChild(row);
