@@ -582,7 +582,6 @@ function loadStats() {
     : 0;
   document.getElementById("current-streak").textContent = stats.currentStreak;
   document.getElementById("max-streak").textContent = stats.maxStreak;
-  updateGuessDistribution(stats.guessDistribution);
 }
 
 function updateStats(won, guessNumber) {
@@ -604,39 +603,6 @@ function updateStats(won, guessNumber) {
   }
   localStorage.setItem(`https://turtle-backend.jasonbohio.workers.dev/api/auth`, JSON.stringify(stats));
   loadStats();
-}
-
-function updateGuessDistribution(distribution) {
-  const container = document.getElementById("distribution-bars");
-  container.innerHTML = "";
-  const maxCount = Math.max(...distribution, 1);
-  distribution.forEach((count, index) => {
-    const barContainer = document.createElement("div");
-    barContainer.style.display = "flex";
-    barContainer.style.alignItems = "center";
-    barContainer.style.margin = "5px 0";
-
-    const label = document.createElement("span");
-    label.textContent = index + 1;
-    label.style.width = "20px";
-    label.style.textAlign = "right";
-    label.style.marginRight = "10px";
-
-    const bar = document.createElement("div");
-    bar.style.height = "20px";
-    bar.style.backgroundColor = count > 0 ? "#538d4e" : "#3a3a3c";
-    bar.style.width = `${(count / maxCount) * 100}px`;
-    bar.style.marginRight = "10px";
-    bar.style.transition = "width 0.3s";
-
-    const countText = document.createElement("span");
-    countText.textContent = count;
-
-    barContainer.appendChild(label);
-    barContainer.appendChild(bar);
-    barContainer.appendChild(countText);
-    container.appendChild(barContainer);
-  });
 }
 
 function setupKeyboard() {
