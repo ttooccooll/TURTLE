@@ -577,7 +577,9 @@ async function loadStats() {
   const userId = localStorage.getItem("turtleUserId");
   if (userId) {
     try {
-      const resp = await fetch(`https://turtle-backend.jasonbohio.workers.dev/api/user/${userId}`);
+      const resp = await fetch(
+        `https://turtle-backend.jasonbohio.workers.dev/api/user/${userId}`
+      );
       if (resp.ok) {
         stats = await resp.json();
       }
@@ -589,11 +591,12 @@ async function loadStats() {
   }
 
   document.getElementById("played").textContent = stats.played;
-  document.getElementById("win-rate").textContent = stats.played ? Math.round((stats.won / stats.played) * 100) : 0;
+  document.getElementById("win-rate").textContent = stats.played
+    ? Math.round((stats.won / stats.played) * 100)
+    : 0;
   document.getElementById("current-streak").textContent = stats.currentStreak;
   document.getElementById("max-streak").textContent = stats.maxStreak;
 }
-
 
 async function updateStats(won, guessNumber) {
   const userId = localStorage.getItem("turtleUserId");
@@ -602,11 +605,14 @@ async function updateStats(won, guessNumber) {
   const body = { won, guessNumber };
 
   try {
-    await fetch(`https://turtle-backend.jasonbohio.workers.dev/api/update-stats`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, ...body }),
-    });
+    await fetch(
+      `https://turtle-backend.jasonbohio.workers.dev/api/update-stats`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, ...body }),
+      }
+    );
   } catch (err) {
     console.error("Failed to update stats on backend:", err);
   }
@@ -614,7 +620,10 @@ async function updateStats(won, guessNumber) {
   // fallback to localStorage
   const statsKey = "turtleStats";
   const stats = JSON.parse(localStorage.getItem(statsKey)) || {
-    played: 0, won: 0, currentStreak: 0, maxStreak: 0
+    played: 0,
+    won: 0,
+    currentStreak: 0,
+    maxStreak: 0,
   };
 
   stats.played++;
@@ -647,11 +656,14 @@ async function ensureUserSignedIn() {
     const username = document.getElementById("username-input").value.trim();
     if (!username) return;
 
-    const resp = await fetch(`https://turtle-backend.jasonbohio.workers.dev/api/auth`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username }),
-    });
+    const resp = await fetch(
+      `https://turtle-backend.jasonbohio.workers.dev/api/auth`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username }),
+      }
+    );
 
     const data = await resp.json();
     localStorage.setItem("turtleUserId", data.userId);
@@ -663,7 +675,9 @@ async function ensureUserSignedIn() {
 
 async function renderLeaderboard() {
   try {
-    const resp = await fetch(`https://turtle-backend.jasonbohio.workers.dev/api/leaderboard`);
+    const resp = await fetch(
+      `https://turtle-backend.jasonbohio.workers.dev/api/leaderboard`
+    );
     if (!resp.ok) throw new Error("Leaderboard fetch failed");
 
     const data = await resp.json();
@@ -673,7 +687,9 @@ async function renderLeaderboard() {
 
     data.forEach((u, i) => {
       const row = document.createElement("div");
-      row.textContent = `#${i + 1} ${u.username} — ${u.win_rate}% win rate — max streak ${u.max_streak}`;
+      row.textContent = `#${i + 1} ${u.username} — ${
+        u.win_rate
+      }% win rate — max streak ${u.max_streak}`;
       el.appendChild(row);
     });
   } catch (err) {
@@ -721,6 +737,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   document
     .getElementById("help-btn")
     .addEventListener("click", () => showModal("help-modal"));
+  document
+    .getElementById("username-btn")
+    .addEventListener("click", () => showModal("username-modal"));
   document
     .getElementById("stats-btn")
     .addEventListener("click", () => showModal("stats-modal"));
