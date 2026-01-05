@@ -3915,7 +3915,6 @@ faker
 vibes
 gassy
 unlit
-nervy
 femme
 biter
 gaffe
@@ -3923,8 +3922,6 @@ saxes
 recap
 synch
 dicey
-ouija
-hewer
 legit
 gurus
 edify
@@ -3939,10 +3936,6 @@ lefty
 mogul
 mafia
 debug
-pates
-blabs
-splay
-talus
 porno
 moola
 nixed
