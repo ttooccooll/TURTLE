@@ -699,35 +699,46 @@ async function renderLeaderboard() {
   }
 }
 
-document.addEventListener(
-  "keydown",
-  (e) => {
-    if (e.key !== "Enter") return;
+document.addEventListener("keydown", (e) => {
+  const activeEl = document.activeElement;
+  const openModal = document.querySelector(".modal.show");
 
-    const openModal = document.querySelector(".modal.show");
-    if (openModal) {
-      if (openModal.id === "payment-qr-modal") {
-        e.preventDefault();
-        e.stopPropagation();
-        return;
-      }
+  // 1️⃣ If typing in an input/textarea, do nothing for game
+  if (
+    activeEl.tagName === "INPUT" ||
+    activeEl.tagName === "TEXTAREA" ||
+    activeEl.isContentEditable
+  ) {
+    return;
+  }
+
+  // 2️⃣ If a modal is open
+  if (openModal) {
+    if (e.key === "Enter") {
       e.preventDefault();
       e.stopPropagation();
+
+      // handle modal-specific logic
       if (openModal.id === "game-over-modal") {
         resetGame();
+      } else if (openModal.id === "payment-qr-modal") {
+        // ignore enter while waiting for QR payment
         return;
+      } else {
+        // generic close for other modals
+        closeModal(openModal.id);
       }
-      openModal.classList.remove("show");
     }
-  },
-  true
-);
 
-document.addEventListener("keydown", (e) => {
+    return; // prevent any game input while a modal is open
+  }
+
+  // 3️⃣ Game input
   if (e.key === "Enter") handleKeyPress("enter");
   else if (e.key === "Backspace") handleKeyPress("backspace");
   else if (/^[a-zA-Z]$/.test(e.key)) handleKeyPress(e.key.toLowerCase());
 });
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   const savedLang = localStorage.getItem("turtleLang") || "english";
