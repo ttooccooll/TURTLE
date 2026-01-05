@@ -519,8 +519,14 @@ main {
   border-bottom: 1px solid #3a3a3c;
 }
 
+.leaderboard-stats,
 .leaderboard-stats-header {
+  width: 130px;
   text-align: right;
+}
+
+.leaderboard-stats {
+  font-variant-numeric: tabular-nums;
 }
 
 @keyframes tipPulse {
