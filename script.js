@@ -689,6 +689,15 @@ document.getElementById("username-submit").onclick = async () => {
 async function renderLeaderboard() {
   const el = document.getElementById("leaderboard");
   el.innerHTML = "<h3>Leaderboard</h3>"; // optional header
+  el.innerHTML += `
+  <div class="leaderboard-header">
+    <div>#</div>
+    <div>Player</div>
+    <div class="leaderboard-stats-header">
+      🏆 Won · Win% · 🔥 Streak
+    </div>
+  </div>
+`;
 
   try {
     const resp = await fetch(
@@ -726,9 +735,10 @@ async function renderLeaderboard() {
   <div class="leaderboard-rank">${i + 1}</div>
   <div class="leaderboard-name">${u.username}</div>
   <div class="leaderboard-stats">
-    🏆 ${u.won} · ${u.win_rate}% · 🔥 ${u.max_streak}
+    ${u.won} · ${u.win_rate}% · ${u.max_streak}
   </div>
 `;
+
       el.appendChild(row);
     });
   } catch (err) {
