@@ -700,11 +700,23 @@ async function renderLeaderboard() {
       return b.played - a.played;
     });
 
+    const currentUser = localStorage.getItem("turtleUsername");
+
     // Render each player
     data.forEach((u, i) => {
       const row = document.createElement("div");
       row.className = "leaderboard-row";
-      row.textContent = `#${i + 1} ${u.username} — Played: ${u.played}, Won: ${u.won}, Current Streak: ${u.current_streak}, Max Streak: ${u.max_streak}, Win Rate: ${u.win_rate}%`;
+
+      // Highlight current user
+      if (u.username === currentUser) {
+        row.classList.add("current-player");
+      }
+
+      row.textContent = `#${i + 1} ${u.username} — Played: ${u.played}, Won: ${
+        u.won
+      }, Current Streak: ${u.current_streak}, Max Streak: ${
+        u.max_streak
+      }, Win Rate: ${u.win_rate}%`;
       el.appendChild(row);
     });
   } catch (err) {
