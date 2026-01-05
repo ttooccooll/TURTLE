@@ -442,6 +442,7 @@ main {
 }
 
 #username-input {
+  font-size: 16px;
   margin: 5px;
 }
 
@@ -532,7 +533,7 @@ main {
 }
 
 .leaderboard-stats {
-    text-align: center;
+  text-align: center;
 }
 
 @keyframes tipPulse {
