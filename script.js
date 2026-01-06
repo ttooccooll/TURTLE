@@ -688,7 +688,7 @@ document.getElementById("username-submit").onclick = async () => {
 
 async function renderLeaderboard() {
   const el = document.getElementById("leaderboard");
-  el.innerHTML = "<h3>Leaderboard</h3>"; // optional header
+  el.innerHTML = "<h3>Leaderboard</h3>";
   el.innerHTML += `
   <div class="leaderboard-header">
     <div class="leaderboard-number">#</div>
