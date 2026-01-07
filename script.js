@@ -412,12 +412,27 @@ function updateCurrentRow() {
   });
 }
 
+function isValidEnglishWord(word) {
+  return WORDS.includes(word.toUpperCase());
+}
+
 function submitGuess() {
   if (currentGuess.length !== WORD_LENGTH) {
     showMessage("Not enough letters");
     shakeRow();
     return;
   }
+
+  // Only enforce dictionary check for English
+  if (
+    currentLanguage === "english" &&
+    !WORDS.includes(currentGuess.toUpperCase())
+  ) {
+    showMessage("Word not in dictionary");
+    shakeRow();
+    return;
+  }
+
   checkGuess();
 }
 
