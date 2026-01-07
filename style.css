@@ -429,6 +429,7 @@ main {
   font-weight: bold;
   box-shadow: 0 0 12px rgba(255, 170, 50, 0.6);
   margin: 5px;
+  margin-right: 15px;
 }
 
 #tip-btn:hover {
