@@ -432,7 +432,7 @@ main {
   margin-right: 15px;
 }
 
-#tip-btn:hover {
+#tip-btn::hover {
   transform: scale(1.08);
   box-shadow: 0 0 18px rgba(255, 170, 50, 0.9);
 }
