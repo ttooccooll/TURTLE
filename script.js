@@ -825,6 +825,8 @@ document
     currentLanguage = e.target.value;
     localStorage.setItem("turtleLang", currentLanguage);
 
+    e.target.blur();
+
     await loadWordList(currentLanguage);
     reloadGameForLanguageChange();
   });
