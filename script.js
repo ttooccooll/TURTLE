@@ -799,17 +799,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await renderLeaderboard(); // populate leaderboard
   });
   document
-    .getElementById("view-stats-link")
-    .addEventListener("click", async (e) => {
-      e.preventDefault();
-
-      closeModal("game-over-modal");
-      showModal("stats-modal");
-
-      await loadStats();
-      await renderLeaderboard();
-    });
-  document
     .getElementById("username-btn")
     .addEventListener("click", () => showModal("username-modal"));
   startNewGame();
