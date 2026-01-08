@@ -86,10 +86,7 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 500px;
-  margin: 0;
+  padding-top: 20px;
 }
 
 #game-board {
