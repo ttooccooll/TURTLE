@@ -9,7 +9,10 @@ let gameOver = false;
 let letterStates = {};
 let activeTimeouts = [];
 let isFocusSet = false;
+let canPlayGame = false;
 let currentLanguage = "english";
+
+canPlayGame = sessionStorage.getItem("turtleCanPlay") === "true";
 
 const gameBoard = document.getElementById("game-board");
 const messageContainer = document.getElementById("message-container");
@@ -142,12 +145,17 @@ async function startNewGame() {
     const paymentSuccess = await handlePayment();
     if (!paymentSuccess) {
       showMessage("Payment not completed. Game cannot start.");
+      canPlayGame = false;
       return;
     }
 
     inputLocked = false;
+    canPlayGame = true;
+    sessionStorage.setItem("turtleCanPlay", "true");
     showMessage("Payment received! Game started!");
   } else {
+    canPlayGame = true;
+    sessionStorage.setItem("turtleCanPlay", "true");
     showMessage("Game started! Good luck!");
   }
 
@@ -451,7 +459,7 @@ function shakeRow() {
 let inputLocked = false;
 
 function handleKeyPress(key) {
-  if (gameOver || inputLocked) return;
+  if (!canPlayGame || gameOver || inputLocked) return;
 
   if (key === "enter") {
     submitGuess();
@@ -542,6 +550,11 @@ function showError(text, duration = 3000) {
 }
 
 async function reloadGameForLanguageChange() {
+  if (!canPlayGame) {
+    showMessage("Payment required to play.");
+    inputLocked = true;
+    return;
+  }
   inputLocked = false;
   isFocusSet = false;
 
@@ -577,6 +590,9 @@ function showGameOver(won) {
   const title = document.getElementById("game-over-title");
   const message = document.getElementById("game-over-message");
   const answerDiv = document.getElementById("game-over-answer");
+
+  canPlayGame = false;
+  sessionStorage.removeItem("turtleCanPlay");
 
   if (won) {
     title.textContent = "Congratulations!";
