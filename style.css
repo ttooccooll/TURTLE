@@ -563,9 +563,6 @@ main {
   header {
     padding: 8px;
   }
-  main {
-    margin: 10px 0;
-  }
   .tile {
     width: 42px;
     height: 42px;
