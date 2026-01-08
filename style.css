@@ -478,7 +478,7 @@ main {
 .leaderboard-row {
   display: grid;
   grid-template-columns: 32px 1fr auto;
-  gap: 1px;
+  gap: 8px;
   align-items: center;
   padding: 6px 4px;
   border-bottom: 1px solid #2a2a2c;
