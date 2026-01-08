@@ -43,6 +43,29 @@ header h1 {
   letter-spacing: 0.05em;
 }
 
+#username-modal p {
+  background: linear-gradient(120deg, #f0f8ff, #e0f7fa);
+  border-left: 6px solid #00bcd4;
+  border-radius: 10px;
+  padding: 15px 20px;
+  font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #333;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin: 15px 0;
+}
+
+#username-modal p span.highlight {
+  font-weight: bold;
+  color: #d32f2f; /* red accent for important words */
+}
+
+#username-modal p span.fun {
+  color: #388e3c; /* green for fun stuff */
+}
+
+
 #username-btn {
   position: absolute;
   left: 0;
