@@ -52,6 +52,13 @@ header h1 {
   right: 40px;
 }
 
+/* Prevent double-tap zoom on interactive elements */
+button,
+.key,
+#keyboard {
+  touch-action: manipulation;
+}
+
 .icon-button {
   background: none;
   border: none;
