@@ -261,6 +261,11 @@ async function payWithQR(amountSats, memo = "Turtle Game Payment") {
       }
     };
 
+    document.getElementById("close-qr-btn").onclick = () => {
+      closeModal("payment-qr-modal");
+      showMessage("Payment still pending. You can continue browsing.");
+    };
+
     const statusEl = document.getElementById("qr-status");
     statusEl.textContent = "Waiting for payment...";
 
