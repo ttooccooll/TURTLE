@@ -263,6 +263,7 @@ async function payWithQR(amountSats, memo = "Turtle Game Payment") {
 
     document.getElementById("close-qr-btn").onclick = () => {
       closeModal("payment-qr-modal");
+      closeModal("game-over-modal");
       showMessage("Payment still pending. You can continue browsing.");
     };
 
