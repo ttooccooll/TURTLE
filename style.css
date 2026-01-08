@@ -570,7 +570,7 @@ main {
   .key {
     height: 44px;
     min-width: 28px;
-    font-size: 12px;
+    font-size: 16px;
   }
   #keyboard {
     gap: 4px;
