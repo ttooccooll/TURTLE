@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>TURTLE</title>
+    <title>TURTLE – Word Puzzle Game with Bitcoin Lightning</title>
     <link rel="icon" href="turtle.jpg" />
     <script
       src="https://unpkg.com/webln@0.3.2/dist/webln.min.js"
@@ -14,13 +14,40 @@
     <link rel="stylesheet" id="stylesheet" href="style.css" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-    />
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <meta
+        name="description"
+        content="Play Turtle, a daily word puzzle game inspired by Wordle. One free game per day, multiple languages, global leaderboard, and optional Bitcoin Lightning payments for extra plays."/>
+    <link rel="canonical" href="https://turtlewordgame.xyz/" />
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "VideoGame",
+            "name": "Turtle",
+            "description": "A daily word puzzle game inspired by Wordle with optional Bitcoin Lightning payments.",
+            "genre": ["Puzzle", "Word Game"],
+            "applicationCategory": "Game",
+            "operatingSystem": "Web",
+            "url": "https://yourdomain.com",
+            "inLanguage": ["en", "fr", "de", "es", "pt", "it"],
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            }
+        }
+    </script>
   </head>
+
   <body>
     <header role="banner">
       <button class="icon-button" id="username-btn">sign-in</button>
-      <h1>TURTLE</h1>
+      <h1>
+        TURTLE
+        <span class="visually-hidden">
+            - Word Puzzle Game
+        </span>
+      </h1>
       <button class="icon-button" id="help-btn">?</button>
       <button class="icon-button" id="stats-btn">📊</button>
     </header>
