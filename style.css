@@ -541,6 +541,10 @@ main {
   text-align: center;
 }
 
+#qr-status {
+    margin-top: 5px;
+}
+
 @keyframes tipPulse {
   0% {
     transform: scale(1);
