@@ -12,7 +12,8 @@ body {
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
   background-color: #121213;
   color: #d7dadc;
-  height: 100vh;
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
