@@ -11,6 +11,8 @@ let activeTimeouts = [];
 let isFocusSet = false;
 let canPlayGame = false;
 let currentLanguage = "english";
+let username = localStorage.getItem("turtleUsername") || "";
+
 
 canPlayGame = sessionStorage.getItem("turtleCanPlay") === "true";
 
@@ -167,11 +169,12 @@ async function startNewGame() {
 
 async function generateInvoiceForBlink(amountSats) {
   try {
+    const usernameSafe = username || "Anonymous";
     const resp = await fetch("/api/create-invoice", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       cache: "no-store",
-      body: JSON.stringify({ amount: amountSats, memo: "Turtle Game Payment" }),
+      body: JSON.stringify({ amount: amountSats, memo: `Turtle Game Payment - ${usernameSafe}` }),
     });
 
     const text = await resp.text();
