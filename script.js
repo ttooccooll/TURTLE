@@ -13,7 +13,6 @@ let canPlayGame = false;
 let currentLanguage = "english";
 let username = localStorage.getItem("turtleUsername") || "";
 
-
 canPlayGame = sessionStorage.getItem("turtleCanPlay") === "true";
 
 const gameBoard = document.getElementById("game-board");
@@ -174,7 +173,10 @@ async function generateInvoiceForBlink(amountSats) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       cache: "no-store",
-      body: JSON.stringify({ amount: amountSats, memo: `Turtle Game Payment - ${usernameSafe}` }),
+      body: JSON.stringify({
+        amount: amountSats,
+        memo: `Turtle Game Payment - ${usernameSafe}`,
+      }),
     });
 
     const text = await resp.text();
@@ -211,9 +213,11 @@ async function payInvoice(paymentRequest) {
   }
 }
 
-async function payWithQR(amountSats, memo = "Turtle Game Payment") {
+async function payWithQR(amountSats) {
   const tipBtn = document.getElementById("tip-btn");
   tipBtn.disabled = true;
+  const usernameSafe = username || "Anonymous";
+  const memo = `Turtle Game Payment - ${usernameSafe}`;
 
   try {
     const resp = await fetch("/api/create-invoice", {
@@ -367,8 +371,10 @@ async function handlePayment() {
         console.warn("WebLN failed, falling back to QR:", weblnErr);
       }
     }
+    const usernameSafe = username || "Anonymous";
+    const memo = `Turtle Game Payment - ${usernameSafe}`;
 
-    const qrSuccess = await payWithQR(100, "Turtle Game Payment");
+    const qrSuccess = await payWithQR(100, memo);
     tipBtn.disabled = false;
     return qrSuccess;
   } catch (err) {
