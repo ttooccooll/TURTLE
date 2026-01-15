@@ -740,7 +740,7 @@ async function renderLeaderboard() {
     <div class="leaderboard-number">#</div>
     <div>Player</div>
     <div class="leaderboard-stats-header">
-      🔥 Streak · Win% · 🏆 Won
+      🏆 Won · 🔥 Streak · Win%
     </div>
   </div>
 `;
@@ -761,7 +761,7 @@ async function renderLeaderboard() {
 
     // Sort by games won descending
     data.sort((a, b) => {
-      if (b.max_streak !== a.max_streak) return b.max_streak - a.max_streak;
+      if (b.won !== a.won) return b.won - a.won;
       return b.win_rate - a.win_rate;
     });
 
@@ -781,7 +781,7 @@ async function renderLeaderboard() {
   <div class="leaderboard-rank">${i + 1}</div>
   <div class="leaderboard-name">${u.username}</div>
   <div class="leaderboard-stats">
-    ${u.max_streak} in a row · ${u.win_rate}% · ${u.won} wins
+    ${u.won} wins · ${u.max_streak} in a row · ${u.win_rate}%
   </div>
 `;
 
