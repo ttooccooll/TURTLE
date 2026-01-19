@@ -3727,12 +3727,9 @@ funky
 ducat
 dewey
 skoal
-oomph
 taker
-minim
 getup
 stoic
-synod
 runty
 flyby
 braze
@@ -3787,7 +3784,6 @@ arias
 nosey
 paean
 lacey
-banns
 swain
 fryer
 retch
