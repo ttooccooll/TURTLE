@@ -481,7 +481,7 @@ main {
   border-top: 1px solid #3a3a3c;
   padding-top: 8px;
   font-size: 14px;
-  max-height: 260px;
+  max-height: 100svh;
   overflow-y: auto;
 }
 
