@@ -841,8 +841,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     .addEventListener("click", () => showModal("help-modal"));
   document.getElementById("stats-btn").addEventListener("click", async () => {
     showModal("stats-modal");
-    await loadStats(); // update stats
-    await renderLeaderboard(); // populate leaderboard
+    await loadStats();
+    await renderLeaderboard();
   });
   document
     .getElementById("username-btn")
