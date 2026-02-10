@@ -620,7 +620,7 @@ function showGameOver(won) {
     message.textContent = "Better luck next time!";
     answerDiv.innerHTML = `<p>The word was <strong>${targetWord}</strong></p>`;
   }
-
+  maybeEnableNostrShare();
   showModal("game-over-modal");
 }
 
@@ -704,6 +704,82 @@ function setupKeyboard() {
     key.addEventListener("click", () => handleKeyPress(key.dataset.key));
   });
 }
+
+function maybeEnableNostrShare() {
+  if (!window.nostr) return;
+
+  const btn = document.getElementById("nostr-share-btn");
+  if (btn) {
+    btn.style.display = "inline-block";
+  }
+}
+
+async function shareToNostr() {
+  if (!window.nostr || !gameOver) return;
+
+  try {
+    const rows = [];
+    for (let i = 0; i <= currentRow; i++) {
+      const tiles = document.querySelectorAll(`#row-${i} .tile`);
+      let row = "";
+      tiles.forEach((tile) => {
+        if (tile.classList.contains("correct")) row += "🟩";
+        else if (tile.classList.contains("present")) row += "🟨";
+        else row += "⬛";
+      });
+      rows.push(row);
+    }
+
+    const won = currentGuess === targetWord || gameOver && currentRow < MAX_GUESSES;
+
+    const content = `
+🐢 Turtle Word
+
+${won ? "🧩 Solved" : "❌ Failed"} ${won ? `in ${currentRow + 1}/${MAX_GUESSES}` : ""}
+🌍 Language: ${currentLanguage}
+
+${rows.join("\n")}
+
+Play: https://turtlewordgame.xyz/
+`.trim();
+
+    const event = {
+      kind: 1,
+      created_at: Math.floor(Date.now() / 1000),
+      tags: [
+        ["t", "turtleword"],
+        ["t", "wordgame"],
+        ["t", `lang-${currentLanguage}`],
+        ["client", "turtle-word", "https://turtlewordgame.xyz"]
+      ],
+      content
+    };
+
+    const signedEvent = await window.nostr.signEvent(event);
+
+    const relays = [
+      "wss://relay.damus.io",
+      "wss://nos.lol",
+      "wss://relay.snort.social"
+    ];
+
+    relays.forEach((url) => {
+      const ws = new WebSocket(url);
+      ws.onopen = () => {
+        ws.send(JSON.stringify(["EVENT", signedEvent]));
+        ws.close();
+      };
+    });
+
+    showMessage("Shared to Nostr 🟣");
+  } catch (err) {
+    console.error("Nostr share failed:", err);
+    showError("Could not share to Nostr.");
+  }
+}
+
+document.getElementById("nostr-share-btn")
+  ?.addEventListener("click", shareToNostr);
 
 document.getElementById("username-submit").onclick = async () => {
   const username = document.getElementById("username-input").value.trim();
