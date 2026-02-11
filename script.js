@@ -751,7 +751,7 @@ Play: https://turtlewordgame.xyz/
       kind: 1,
       created_at: Math.floor(Date.now() / 1000) - 2,
       tags: [
-        ["t", "turtleword"],
+        ["t", "turtlewordgame"],
         ["t", "wordgame"],
         ["t", `lang-${currentLanguage}`],
         ["client", "turtle-word", "https://turtlewordgame.xyz"],
