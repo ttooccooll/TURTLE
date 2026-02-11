@@ -609,7 +609,7 @@ function showGameOver(won) {
   if (won) {
     title.textContent = "Congratulations!";
     const messages = [
-      "Genius",
+      "Boom!",
       "Magnificent",
       "Impressive",
       "Splendid",
