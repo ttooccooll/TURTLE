@@ -321,7 +321,7 @@ function waitForPayment(paymentHash, statusEl, timeout = 5 * 60 * 1000) {
           `/api/check-invoice?paymentHash=${paymentHash}`,
           {
             cache: "no-store",
-          }
+          },
         );
 
         if (!resp.ok) throw new Error(`Invoice check failed: ${resp.status}`);
@@ -509,22 +509,25 @@ function checkGuess() {
     }, index * 100);
   });
 
-  setSafeTimeout(() => {
-    if (currentGuess === targetWord) {
-      gameOver = true;
-      updateStats(true, currentRow + 1);
-      showGameOver(true);
-    } else if (currentRow === MAX_GUESSES - 1) {
-      gameOver = true;
-      updateStats(false, 0);
-      showGameOver(false);
-    } else {
-      currentRow++;
-      currentGuess = "";
-    }
+  setSafeTimeout(
+    () => {
+      if (currentGuess === targetWord) {
+        gameOver = true;
+        updateStats(true, currentRow + 1);
+        showGameOver(true);
+      } else if (currentRow === MAX_GUESSES - 1) {
+        gameOver = true;
+        updateStats(false, 0);
+        showGameOver(false);
+      } else {
+        currentRow++;
+        currentGuess = "";
+      }
 
-    inputLocked = false;
-  }, WORD_LENGTH * 100 + 300);
+      inputLocked = false;
+    },
+    WORD_LENGTH * 100 + 300,
+  );
 }
 
 function updateKeyboard(letter, state) {
@@ -636,7 +639,7 @@ async function loadStats() {
   if (userId) {
     try {
       const resp = await fetch(
-        `https://turtle-backend.jasonbohio.workers.dev/api/user/${userId}`
+        `https://turtle-backend.jasonbohio.workers.dev/api/user/${userId}`,
       );
       if (resp.ok) {
         stats = await resp.json();
@@ -669,7 +672,7 @@ async function updateStats(won, guessNumber) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, ...body }),
-      }
+      },
     );
   } catch (err) {
     console.error("Failed to update stats on backend:", err);
@@ -730,7 +733,8 @@ async function shareToNostr() {
       rows.push(row);
     }
 
-    const won = currentGuess === targetWord || gameOver && currentRow < MAX_GUESSES;
+    const won =
+      currentGuess === targetWord || (gameOver && currentRow < MAX_GUESSES);
 
     const content = `
 🐢 Turtle Word
@@ -745,31 +749,19 @@ Play: https://turtlewordgame.xyz/
 
     const event = {
       kind: 1,
-      created_at: Math.floor(Date.now() / 1000),
+      created_at: Math.floor(Date.now() / 1000) - 2,
       tags: [
         ["t", "turtleword"],
         ["t", "wordgame"],
         ["t", `lang-${currentLanguage}`],
-        ["client", "turtle-word", "https://turtlewordgame.xyz"]
+        ["client", "turtle-word", "https://turtlewordgame.xyz"],
       ],
-      content
+      content,
     };
 
     const signedEvent = await window.nostr.signEvent(event);
 
-    const relays = [
-      "wss://relay.damus.io",
-      "wss://nos.lol",
-      "wss://relay.snort.social"
-    ];
-
-    relays.forEach((url) => {
-      const ws = new WebSocket(url);
-      ws.onopen = () => {
-        ws.send(JSON.stringify(["EVENT", signedEvent]));
-        ws.close();
-      };
-    });
+    await publishToRelays(signedEvent);
 
     showMessage("Shared to Nostr 🟣");
   } catch (err) {
@@ -778,7 +770,46 @@ Play: https://turtlewordgame.xyz/
   }
 }
 
-document.getElementById("nostr-share-btn")
+async function publishToRelays(event) {
+  const relays = [
+    "wss://relay.damus.io",
+    "wss://nos.lol",
+    "wss://relay.snort.social",
+  ];
+
+  await Promise.all(
+    relays.map((url) => {
+      return new Promise((resolve) => {
+        const ws = new WebSocket(url);
+
+        ws.onopen = () => {
+          ws.send(JSON.stringify(["EVENT", event]));
+        };
+
+        ws.onmessage = (msg) => {
+          try {
+            const data = JSON.parse(msg.data);
+
+            if (data[0] === "OK" && data[1] === event.id) {
+              ws.close();
+              resolve(true);
+            }
+          } catch {}
+        };
+
+        ws.onerror = () => resolve(false);
+
+        setTimeout(() => {
+          ws.close();
+          resolve(false);
+        }, 3000);
+      });
+    }),
+  );
+}
+
+document
+  .getElementById("nostr-share-btn")
   ?.addEventListener("click", shareToNostr);
 
 document.getElementById("username-submit").onclick = async () => {
@@ -792,7 +823,7 @@ document.getElementById("username-submit").onclick = async () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username }),
-      }
+      },
     );
 
     const data = await resp.json();
@@ -823,7 +854,7 @@ async function renderLeaderboard() {
 
   try {
     const resp = await fetch(
-      `https://turtle-backend.jasonbohio.workers.dev/api/leaderboard`
+      `https://turtle-backend.jasonbohio.workers.dev/api/leaderboard`,
     );
 
     if (!resp.ok) throw new Error("Leaderboard fetch failed");
