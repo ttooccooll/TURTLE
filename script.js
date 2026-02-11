@@ -737,7 +737,7 @@ async function shareToNostr() {
       currentGuess === targetWord || (gameOver && currentRow < MAX_GUESSES);
 
     const content = `
-🐢 Turtle Word
+🐢 Turtle Word 🐢
 
 ${won ? "🧩 Solved" : "❌ Failed"} ${won ? `in ${currentRow + 1}/${MAX_GUESSES}` : ""}
 🌍 Language: ${currentLanguage}
