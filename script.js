@@ -10,6 +10,7 @@ let letterStates = {};
 let activeTimeouts = [];
 let isFocusSet = false;
 let canPlayGame = false;
+let lastGameWon = null;
 let currentLanguage = "english";
 let username = localStorage.getItem("turtleUsername") || "";
 
@@ -599,6 +600,7 @@ function closeModal(modalId) {
 }
 
 function showGameOver(won) {
+  lastGameWon = won;
   const title = document.getElementById("game-over-title");
   const message = document.getElementById("game-over-message");
   const answerDiv = document.getElementById("game-over-answer");
@@ -733,8 +735,7 @@ async function shareToNostr() {
       rows.push(row);
     }
 
-    const won =
-      currentGuess === targetWord || (gameOver && currentRow < MAX_GUESSES);
+    const won = lastGameWon === true;
 
     const content = `
 🐢 TURTLE 🐢
