@@ -775,7 +775,7 @@ Play: https://turtlewordgame.xyz/
 
       const linkEl = document.getElementById("nostr-note-link");
       linkEl.href = noteUrl;
-      linkEl.textContent = "View your note on njump.me";
+      linkEl.textContent = "View your note on njump.to";
     } else {
       showError("Could not reach any relays.");
     }
