@@ -627,3 +627,25 @@ main {
     transition: none !important;
   }
 }
+
+.nostr-link {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 10px 16px;
+  border-radius: 4px;
+  background-color: #818384;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.nostr-link:hover {
+  background-color: #9a9c9e;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.nostr-link:active {
+  transform: scale(0.95);
+}
