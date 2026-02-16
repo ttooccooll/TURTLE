@@ -770,7 +770,7 @@ Play: https://turtlewordgame.xyz/
 
     if (success) {
       nostrShared = true;
-      const noteUrl = `https://njump.me/${signedEvent.id}`;
+      const noteUrl = `https://njump.to/${signedEvent.id}`;
       showModal("nostr-success-modal");
 
       const linkEl = document.getElementById("nostr-note-link");
