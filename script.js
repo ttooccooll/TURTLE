@@ -11,6 +11,7 @@ let activeTimeouts = [];
 let isFocusSet = false;
 let canPlayGame = false;
 let lastGameWon = null;
+let nostrShared = false;
 let currentLanguage = "english";
 let username = localStorage.getItem("turtleUsername") || "";
 
@@ -116,6 +117,7 @@ function markFreeGamePlayed() {
 async function startNewGame() {
   inputLocked = false;
   isFocusSet = false;
+  nostrShared = false;
   document.addEventListener("keydown", handleFirstKeypress);
 
   activeTimeouts.forEach((id) => clearTimeout(id));
@@ -721,6 +723,7 @@ function maybeEnableNostrShare() {
 
 async function shareToNostr() {
   if (!window.nostr || !gameOver) return;
+  if (nostrShared) return;
 
   try {
     const rows = [];
@@ -746,11 +749,12 @@ ${won ? "🧩 Solved" : "❌ Failed"} ${won ? `in ${currentRow + 1}/${MAX_GUESSE
 ${rows.join("\n")}
 
 Play: https://turtlewordgame.xyz/
+#turtlewordgame
 `.trim();
 
     const event = {
       kind: 1,
-      created_at: Math.floor(Date.now() / 1000) - 2,
+      created_at: Math.floor(Date.now() / 1000),
       tags: [
         ["t", "turtlewordgame"],
         ["t", "wordgame"],
@@ -762,9 +766,16 @@ Play: https://turtlewordgame.xyz/
 
     const signedEvent = await window.nostr.signEvent(event);
 
-    await publishToRelays(signedEvent);
+    const success = await publishToRelays(signedEvent);
 
-    showMessage("Shared to Nostr 🟣");
+    if (success) {
+      nostrShared = true;
+      const noteUrl = `https://njump.me/${signedEvent.id}`;
+      showMessage("Shared! View on njump.me");
+      window.open(noteUrl, "_blank");
+    } else {
+      showError("Could not reach any relays.");
+    }
   } catch (err) {
     console.error("Nostr share failed:", err);
     showError("Could not share to Nostr.");
@@ -772,16 +783,34 @@ Play: https://turtlewordgame.xyz/
 }
 
 async function publishToRelays(event) {
-  const relays = [
-    "wss://relay.damus.io",
-    "wss://nos.lol",
-    "wss://relay.snort.social",
-  ];
+  let relays = [];
+
+  if (window.nostr.getRelays) {
+    try {
+      const userRelays = await window.nostr.getRelays();
+      relays = Object.keys(userRelays).filter((url) => userRelays[url].write);
+    } catch {}
+  }
+
+  if (relays.length === 0) {
+    relays = [
+      "wss://relay.damus.io",
+      "wss://nos.lol",
+      "wss://relay.snort.social",
+    ];
+  }
+
+  let successCount = 0;
 
   await Promise.all(
     relays.map((url) => {
       return new Promise((resolve) => {
         const ws = new WebSocket(url);
+
+        const timeout = setTimeout(() => {
+          ws.close();
+          resolve(false);
+        }, 5000);
 
         ws.onopen = () => {
           ws.send(JSON.stringify(["EVENT", event]));
@@ -792,21 +821,26 @@ async function publishToRelays(event) {
             const data = JSON.parse(msg.data);
 
             if (data[0] === "OK" && data[1] === event.id) {
+              successCount++;
+              clearTimeout(timeout);
               ws.close();
               resolve(true);
+            }
+
+            if (data[0] === "NOTICE") {
+              console.warn("Relay notice:", data[1]);
             }
           } catch {}
         };
 
-        ws.onerror = () => resolve(false);
-
-        setTimeout(() => {
+        ws.onerror = () => {
           ws.close();
           resolve(false);
-        }, 3000);
+        };
       });
     }),
   );
+  return successCount > 0;
 }
 
 document
