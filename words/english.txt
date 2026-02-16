@@ -3302,8 +3302,6 @@ vises
 mocha
 oiled
 roman
-ethyl
-gotta
 fugue
 smack
 gourd
@@ -4326,11 +4324,6 @@ nitro
 carny
 gimel
 agape
-admen
-offen
-cills
-offal
-lotta
 thwap
 alway
 boggy
