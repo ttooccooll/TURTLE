@@ -771,8 +771,11 @@ Play: https://turtlewordgame.xyz/
     if (success) {
       nostrShared = true;
       const noteUrl = `https://njump.me/${signedEvent.id}`;
-      showMessage("Shared! View on njump.me");
-      window.open(noteUrl, "_blank");
+      showModal("nostr-success-modal");
+
+      const linkEl = document.getElementById("nostr-note-link");
+      linkEl.href = noteUrl;
+      linkEl.textContent = "View your note on njump.me";
     } else {
       showError("Could not reach any relays.");
     }
@@ -846,6 +849,17 @@ async function publishToRelays(event) {
 document
   .getElementById("nostr-share-btn")
   ?.addEventListener("click", shareToNostr);
+
+document.getElementById("copy-note-link-btn").onclick = async () => {
+  const link = document.getElementById("nostr-note-link").href;
+
+  try {
+    await navigator.clipboard.writeText(link);
+    showMessage("Link copied 📋");
+  } catch {
+    showError("Could not copy link.");
+  }
+};
 
 document.getElementById("username-submit").onclick = async () => {
   const username = document.getElementById("username-input").value.trim();

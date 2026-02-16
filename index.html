@@ -374,6 +374,20 @@
       </div>
     </div>
 
+    <div id="nostr-success-modal" class="modal">
+      <div class="modal-content">
+        <h3>Shared to Nostr 🎉</h3>
+        <p>Your note was published successfully.</p>
+
+        <a id="nostr-note-link" target="_blank" class="nostr-link"></a>
+
+        <div style="margin-top: 15px;">
+          <button id="copy-note-link-btn">Copy Link</button>
+          <button onclick="closeModal('nostr-success-modal')">Close</button>
+        </div>
+      </div>
+    </div>
+
     <div id="payment-qr-modal" class="modal">
       <div class="modal-content">
         <h2>Pay with Bitcoin</h2>
