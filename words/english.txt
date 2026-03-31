@@ -3426,9 +3426,6 @@ piper
 waxer
 basil
 coons
-seine
-piney
-lemma
 trams
 winch
 whirr
@@ -3439,7 +3436,6 @@ harem
 tummy
 shied
 dross
-farad
 saver
 serif
 facto
@@ -3826,10 +3822,7 @@ sepia
 tomes
 carob
 emcee
-prams
 poser
-verso
-hubba
 joule
 baize
 cubby
@@ -4148,7 +4141,6 @@ shags
 clone
 hazed
 macho
-drams
 biker
 porky
 exude
