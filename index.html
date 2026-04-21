@@ -19,22 +19,95 @@
         name="description"
         content="Play Turtle, a daily word puzzle game inspired by Wordle. One free game per day, multiple languages, global leaderboard, and optional Bitcoin Lightning payments for extra plays."/>
     <link rel="canonical" href="https://turtlewordgame.xyz/" />
+    
+    <!-- Open Graph tags for better social sharing -->
+    <meta property="og:title" content="TURTLE – Word Puzzle Game with Bitcoin Lightning" />
+    <meta property="og:description" content="Play Turtle, a daily word puzzle game with one free game per day, multiple languages, and Bitcoin Lightning payments for extra plays." />
+    <meta property="og:url" content="https://turtlewordgame.xyz/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://turtlewordgame.xyz/turtle.jpg" />
+    
+    <!-- Twitter Card tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="TURTLE – Word Puzzle Game with Bitcoin Lightning" />
+    <meta name="twitter:description" content="Play Turtle, a daily word puzzle game with one free game per day in multiple languages." />
+    <meta name="twitter:image" content="https://turtlewordgame.xyz/turtle.jpg" />
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
             "@type": "VideoGame",
-            "name": "Turtle",
-            "description": "A daily word puzzle game inspired by Wordle with optional Bitcoin Lightning payments.",
-            "genre": ["Puzzle", "Word Game"],
+            "name": "Turtle Word Game",
+            "description": "A privacy-focused daily word puzzle game inspired by Wordle with optional Bitcoin Lightning payments for extra plays.",
+            "genre": ["Puzzle", "Word Game", "Bitcoin Game"],
             "applicationCategory": "Game",
             "operatingSystem": "Web",
             "url": "https://turtlewordgame.xyz/",
-            "inLanguage": ["en", "fr", "de", "es", "pt", "it"],
+            "inLanguage": ["en", "fr", "de", "es", "pt", "it", "nl", "pl", "af", "sw", "tr", "vi", "xh", "zu"],
             "offers": {
                 "@type": "Offer",
                 "price": "0",
-                "priceCurrency": "USD"
+                "priceCurrency": "USD",
+                "description": "One free play per day, additional plays via Bitcoin Lightning payments"
+            },
+            "author": {
+                "@type": "Organization",
+                "name": "Turtle Word Game"
+            },
+            "keywords": "word game, puzzle game, Bitcoin Lightning, privacy focused, no data collection, ethical gaming, daily word puzzle",
+            "accessibilityFeature": ["highContrast", "alternativeText"],
+            "audience": {
+                "@type": "Audience",
+                "audienceType": "Word game enthusiasts, privacy-conscious gamers"
             }
+        }
+    </script>
+
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "What makes TURTLE different from other word games?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "TURTLE was built with privacy and ethics at its core. Unlike other popular word games that collect user data for advertising purposes, TURTLE follows a transparent business model: one free game per day, with additional plays available through small Bitcoin Lightning payments. No tracking, no ads, no data collection – just pure gaming fun with your privacy intact."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Does TURTLE collect my personal data?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "No! TURTLE was specifically designed to avoid collecting user data. We believe games should respect your privacy. Our ethical business model relies on optional micro-payments rather than selling your data or showing targeted ads."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "What is the Bitcoin Lightning Network?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "The Bitcoin Lightning Network is a second-layer solution built on top of the Bitcoin blockchain that enables fast, low-cost micropayments. It allows you to make small payments quickly without the typical transaction fees associated with regular Bitcoin transactions."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How many languages does TURTLE support?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "TURTLE currently supports 14 languages: English, French, German, Spanish, Portuguese, Italian, Dutch, Polish, Afrikaans, Swahili, Turkish, Vietnamese, Xhosa, and Zulu. We're continually working to add more languages to make the game accessible to players worldwide."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How often are new puzzles released?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "A new puzzle is released daily in each supported language. This means you get one free play per day in each language, giving you multiple opportunities to challenge your vocabulary skills across different languages."
+                    }
+                }
+            ]
         }
     </script>
   </head>
@@ -122,7 +195,7 @@
     <div id="message-container"></div>
 
     <div class="modal" id="help-modal">
-      <div class="modal-content">
+      <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
         <h2>How to Play</h2>
         <p>Guess the TURTLE in six tries.</p>
         <p>
@@ -331,6 +404,41 @@
             is required via the <strong> Bitcoin Lightning Network</strong>.
           </p>
         </div>
+
+        <div class="faq-section" style="margin-top: 30px; margin-bottom: 150%; text-align: left;">
+          <h3 style="border-top: 1px solid #3a3a3c; padding-top: 20px; margin-top: 25px;">Frequently Asked Questions</h3>
+        </br>
+          <div style="max-height: 200px; padding-right: 10px;">
+            <div class="faq-item" style="margin-bottom: 15px;" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+              <h4 style="margin-bottom: 5px; color: #538d4e; font-weight: bold;" itemprop="name">What makes TURTLE different from other word games?</h4>
+              <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                <p itemprop="text">TURTLE was built with privacy at its core. Unlike other popular word games that collect user data for advertising purposes, TURTLE follows a transparent business model: one free game per day, with additional plays available through small Bitcoin Lightning payments. No tracking, no ads, no data collection (beyond a voluntary username that you can makeup).</p>
+              </div>
+            </div>
+
+            <div class="faq-item" style="margin-bottom: 15px;" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+              <h4 style="margin-bottom: 5px; color: #538d4e; font-weight: bold;" itemprop="name">Does TURTLE collect my personal data?</h4>
+              <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                <p itemprop="text">No! TURTLE was specifically designed to avoid collecting user data. We believe games should respect your privacy.</p>
+              </div>
+            </div>
+
+            <div class="faq-item" style="margin-bottom: 15px;" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+              <h4 style="margin-bottom: 5px; color: #538d4e; font-weight: bold;" itemprop="name">What is the Bitcoin Lightning Network?</h4>
+              <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                <p itemprop="text">The Bitcoin Lightning Network is a second-layer solution built on top of the Bitcoin blockchain that enables fast, low-cost micropayments. It allows you to make small payments quickly without the typical transaction fees associated with regular Bitcoin transactions.</p>
+              </div>
+            </div>
+
+            <div class="faq-item" style="margin-bottom: 15px;" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+              <h4 style="margin-bottom: 5px; color: #538d4e; font-weight: bold;" itemprop="name">How many languages does TURTLE support?</h4>
+              <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+                <p itemprop="text">TURTLE currently supports 14 languages: English, French, German, Spanish, Portuguese, Italian, Dutch, Polish, Afrikaans, Swahili, Turkish, Vietnamese, Xhosa, and Zulu. We're continually working to add more languages to make the game accessible to players worldwide.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <button onclick="closeModal('help-modal')">Got it!</button>
       </div>
     </div>
