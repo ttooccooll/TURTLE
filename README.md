@@ -45,18 +45,31 @@ A daily word puzzle game built with vanilla JavaScript and Bitcoin Lightning pay
 # Install dependencies
 npm install
 
-# Create environment file for Lightning payments (optional)
+# Create environment file for Lightning payments
 cp .env.example .env
-# Add your Blink API credentials if you want payment features:
-# BLINK_API_KEY=your_api_key
-# BLINK_WALLET_ID=your_wallet_id
-# BLINK_SERVER=https://api.blink.sv/graphql
+# Add a Nostr Wallet Connect (NIP-47) connection string:
+# NWC_URL=nostr+walletconnect://<pubkey>?relay=wss://...&secret=<hex>
 
-# Start the server
+# Start the server (Vercel CLI runs the /api functions locally)
 npm start
 ```
 
 The game will be available at `http://localhost:3000`.
+
+### Getting an `NWC_URL`
+
+Any NWC-capable wallet issues one — [Alby Hub](https://albyhub.com), [Coinos](https://coinos.io),
+LNbits, Zeus, and others. In Alby Hub it's under **Connections → Add Connection**.
+
+**Scope the connection to `make_invoice` and `lookup_invoice` only.** This secret sits on a web
+server, so it must not be able to spend: never grant it `pay_invoice`. Worst case, a leaked key
+lets someone generate invoices that pay *you*.
+
+Because the app speaks NIP-47 rather than a vendor API, switching wallets later means changing
+`NWC_URL` and nothing else.
+
+For local testing without real sats, `curl -X POST 'https://faucet.nwc.dev?balance=50000'`
+returns a working throwaway connection string on a fake-sats network.
 
 ---
 
@@ -69,7 +82,8 @@ turtle/
 ├── style.css           # Styling with responsive design
 ├── package.json        # Dependencies and scripts
 ├── api/
-│   ├── create-invoice.js   # Lightning invoice generation
+│   ├── _nwc.js            # Shared NWC client + connection lifecycle
+│   ├── create-invoice.js  # Lightning invoice generation
 │   └── check-invoice.js   # Payment verification
 └── words/
     ├── english.txt     # 5-letter word lists by language
@@ -82,9 +96,12 @@ turtle/
 
 ## API Endpoints
 
+Both endpoints talk to your wallet over Nostr Wallet Connect (NIP-47), using the
+`make_invoice` and `lookup_invoice` methods.
+
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/create-invoice` | POST | Creates a Lightning invoice via Blink |
+| `/api/create-invoice` | POST | Creates a Lightning invoice via NWC |
 | `/api/check-invoice` | GET | Checks payment status by hash |
 
 ### Create Invoice
@@ -100,10 +117,11 @@ curl -X POST http://localhost:3000/api/create-invoice \
 {
   "paymentHash": "abc123...",
   "paymentRequest": "lnbc100...",
-  "externalId": "uuid...",
   "satoshis": 100
 }
 ```
+
+Amounts are whole sats between 1 and 1,000,000; invoices expire after 10 minutes.
 
 ### Check Invoice
 
@@ -115,9 +133,12 @@ curl "http://localhost:3000/api/check-invoice?paymentHash=abc123..."
 ```json
 {
   "paid": true,
-  "status": "PAID"
+  "status": "settled"
 }
 ```
+
+`paid` is the field to trust. NIP-47 treats `status` as optional, so it is derived from the
+invoice's settlement timestamp and preimage rather than reported state.
 
 ---
 
@@ -126,8 +147,8 @@ curl "http://localhost:3000/api/check-invoice?paymentHash=abc123..."
 | Layer | Technology |
 |-------|------------|
 | Frontend | Vanilla JavaScript, HTML5, CSS3 |
-| Backend | Node.js |
-| Payments | Bitcoin Lightning Network (Blink API) |
+| Backend | Node.js 22+ (Vercel serverless functions) |
+| Payments | Bitcoin Lightning Network via Nostr Wallet Connect (NIP-47) |
 | Social | Nostr Protocol |
 | Fonts | Clear Sans, Helvetica Neue |
 
@@ -135,7 +156,7 @@ curl "http://localhost:3000/api/check-invoice?paymentHash=abc123..."
 
 - **WebLN** (v0.3.2) — Browser Lightning wallet integration
 - **QRCode** (via CDN) — QR code generation for invoice payments
-- **node-fetch** — HTTP client for server-side API calls
+- **@getalby/sdk** — NWC client for server-side invoice creation and lookup
 
 ---
 
@@ -176,6 +197,6 @@ MIT License — feel free to use, modify, and distribute.
 
 ## Acknowledgments
 
-- Lightning payments powered by [Blink](https://blink.sv/)
+- Lightning payments powered by [Nostr Wallet Connect](https://nwc.dev/) (NIP-47)
 - Social sharing powered by the [Nostr](https://nostr.com/) protocol
 - Created by [jasonb](https://stacker.news/@jasonb) on Stacker News

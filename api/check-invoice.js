@@ -1,58 +1,28 @@
-import fetch from "node-fetch";
+import { withNwc } from "./_nwc.js";
+
+const PAYMENT_HASH = /^[0-9a-f]{64}$/i;
 
 export default async function handler(req, res) {
   const paymentHash = req.query.paymentHash;
-  if (!paymentHash) {
-    return res.status(400).json({ error: "Missing paymentHash" });
+  if (!paymentHash || !PAYMENT_HASH.test(paymentHash)) {
+    return res.status(400).json({ error: "Missing or malformed paymentHash" });
   }
 
   try {
-    const query = `
-      query InvoiceStatusByHash($input: LnInvoicePaymentStatusByHashInput!) {
-        lnInvoicePaymentStatusByHash(input: $input) {
-          paymentHash
-          status
-        }
-      }
-    `;
+    const tx = await withNwc((nwc) =>
+      nwc.lookupInvoice({ payment_hash: paymentHash }),
+    );
 
-    const variables = {
-      input: { paymentHash }
-    };
-
-    const response = await fetch(process.env.BLINK_SERVER, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": process.env.BLINK_API_KEY
-      },
-      body: JSON.stringify({ query, variables })
-    });
-
-    if (!response.ok) {
-      const text = await response.text();
-      return res.status(response.status).json({ error: "Blink API error", details: text });
-    }
-
-    const json = await response.json();
-    if (json.errors) {
-      return res.status(500).json({ error: "GraphQL error", details: json.errors });
-    }
-
-    const invoiceStatus = json.data?.lnInvoicePaymentStatusByHash;
-
-    if (!invoiceStatus) {
-      return res.status(404).json({ error: "Invoice not found", details: json });
-    }
-
-    const status = invoiceStatus.status;
+    // NIP-47 marks `state` optional, so settle the question on the two fields
+    // a paid invoice always carries.
+    const paid = Boolean(tx.settled_at && tx.preimage);
 
     return res.status(200).json({
-      paid: status === "PAID",
-      status
+      paid,
+      status: tx.state ?? (paid ? "settled" : "pending"),
     });
-
   } catch (err) {
-    return res.status(500).json({ error: "Blink API failed", details: err.message });
+    console.error("check-invoice failed:", err);
+    return res.status(502).json({ error: "Failed to check invoice" });
   }
 }

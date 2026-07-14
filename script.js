@@ -169,7 +169,7 @@ async function startNewGame() {
   closeModal("username-modal");
 }
 
-async function generateInvoiceForBlink(amountSats) {
+async function generateInvoice(amountSats) {
   try {
     const usernameSafe = username || "Anonymous";
     const resp = await fetch("/api/create-invoice", {
@@ -183,7 +183,6 @@ async function generateInvoiceForBlink(amountSats) {
     });
 
     const text = await resp.text();
-    console.log("Raw response:", text);
     let data;
     try {
       data = JSON.parse(text);
@@ -308,6 +307,9 @@ async function payWithQR(amountSats) {
   }
 }
 
+// Each poll costs a fresh relay round-trip on the server, so keep it unhurried.
+const PAYMENT_POLL_MS = 3000;
+
 function waitForPayment(paymentHash, statusEl, timeout = 5 * 60 * 1000) {
   return new Promise((resolve) => {
     const start = Date.now();
@@ -353,7 +355,7 @@ function waitForPayment(paymentHash, statusEl, timeout = 5 * 60 * 1000) {
       } catch (err) {
         console.error("waitForPayment error:", err);
       }
-    }, 1000);
+    }, PAYMENT_POLL_MS);
   });
 }
 
@@ -365,7 +367,7 @@ async function handlePayment() {
   try {
     if (typeof WebLN !== "undefined") {
       try {
-        const invoice = await generateInvoiceForBlink(100);
+        const invoice = await generateInvoice(100);
         await payInvoice(invoice);
         showMessage("Payment received! Game unlocked ⚡");
         tipBtn.disabled = false;
@@ -1023,7 +1025,7 @@ document.getElementById("tip-btn").addEventListener("click", async () => {
   tipBtn.disabled = true;
 
   try {
-    const invoiceTip = await generateInvoiceForBlink(10000);
+    const invoiceTip = await generateInvoice(10000);
     await payInvoice(invoiceTip);
     showMessage("Thank you for the 10,000 sats tip 💛");
   } catch (err) {
