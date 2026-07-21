@@ -9,7 +9,11 @@
       integrity="sha384-MpjpvOQqXz9nCoLUS/sR0bhLwGYuNPMOBN50jsqhnqAzDq0GiOI0u6oC5fHitzI2"
       crossorigin="anonymous"
     ></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <!-- Self-hosted (frozen from jsdelivr npm/qrcode build) so no third-party CDN is in the load path. -->
+    <script
+      src="vendor/qrcode.min.js"
+      integrity="sha384-HGmnkDZJy7mRkoARekrrj0VjEFSh9a0Z8qxGri/kTTAJkgR8hqD1lHsYSh3JdzRi"
+    ></script>
     <script src="script.js" defer></script>
     <link rel="stylesheet" id="stylesheet" href="style.css" />
     <meta
