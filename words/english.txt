@@ -4314,7 +4314,6 @@ carny
 gimel
 agape
 thwap
-alway
 boggy
 belay
 gluey
@@ -4322,15 +4321,12 @@ bitsy
 scurf
 bipod
 mucho
-spued
 dozer
-harum
 axels
 bubba
 funks
 gaffs
 ninja
-bebug
 gator
 bight
 morph
@@ -4339,7 +4335,6 @@ holey
 apnea
 johns
 primo
-fuzed
 nerdy
 baldy
 wonky
